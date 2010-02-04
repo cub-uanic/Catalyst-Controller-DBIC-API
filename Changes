@@ -1,0 +1,97 @@
+Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
+
+{{ $NEXT }}
+- Merge create and update into update_or_create
+- object is much advanced now:
+      + Identifier can be omitted, and data_root in the request is interpreted
+- Because of the above one object or several is now possible for update or create
+- Create and Update object validation now happens iteratively
+- Creates and Updates can be mixed inside a single bulk request
+- All modifying actions on the database occur within an all-or-nothing transaction
+- Much of the DBIC search parameter munging is properly moved to the RequestArguments 
+    Role in the form of a trigger on 'search' to populate 'search_parameters' and 
+    'search_attributes' which correspond directly to ->search($parameters, $attributes);
+- Error handling is now much more consistent, using Try::Tiny everywhere possible
+- Tests are now modernized and use JSON::Any
+- Extending is now explicitly done via Moose method modifiers
+- The only portion of the stash in use is to allow runtime definition of create/update_allows
+- list is now broken down into several steps:
+      + list_munge_parameters
+      + list_perform_search
+      + list_format_output
+      + row_format_output (which is just a passthrough per row)
+
+1.004002
+- Implement 'as' as a complement to 'select'
+- CGI::Expand'ed search parameters are now also JSON decoded + test
+- Fixed pod for parameters using a json string which shouldn't be surrounded
+  by single quotes
+- Use next instead of NEXT in RPC
+- Moved sub object from RPC/REST to Base to DRY
+  This will break your code if you subclass from REST
+  and had relied on the action name 'object'
+- Check for defined objects before returning them for create/update
+
+1.004001
+- Allow for more complex prefetch_allows (multiple keys in hash)
+- Skip non-existant parameters in deserialization
+- Fixed whitespace to use spaces instead of tabs
+- Fixed pod to not use the config attributes from before 1.004
+- Fixed prefetch_allows check to properly handle nested attrs + test
+
+1.004000
+- Moosify
+- Move validation for *_exposes/*_allows to Data::DPath::Validator
+- Reorganize internals to use Moose and roles
+- Allow maximum configuration for what request parameters are named
+- Properly handle JSON boolean values
+- Earlier and more consistent validation of configuration and request parameters
+
+1.003004
+- Database errors are also handled for searches + tests
+- Totalcount isn't included in the response if a db error occurs while fetching data
+- Converted no_plan tests to done_testing (required Test::More 0.88)
+
+1.003003
+- Database errors are properly handled + test
+- Fixed isa redefined warnings
+- Fixed bug preventing compat with future Catalyst::Action::Deserialize versions
+
+1.003002
+- Added totalcount to paged list responses
+- Fixed some tests weren't run in t/rpc/list.t
+- Fixed wrong setup_dbic_args_method error message
+
+1.003001
+- Minor fix to prevent failing test
+
+1.003000
+- Added prefetch support
+- Refactored to ensure all request params accept JSON, CGI::Expand or standard params
+- Doc improvements
+
+1.002000
+- Better error handing when unable to parse search arg
+- Added setup_dbic_args_method config option
+- Added list_search_exposes config option
+- Removed duplicate tests in t/rpc/list.t and t/rest/list.t
+- Fixed searches on columns which have a rel with the same name
+  and vice versa
+- Added search by json
+- Added pagination support
+
+1.001000
+- Added setup_list_method configuration flag (jshirley)
+- Added support for setting config params in stash
+- Added list_grouped_by, list_count and list_ordered_by config attributes
+- Fixed bug with behaviour of list_returns
+
+1.000002
+- Fixed lack of deserialization under RPC
+
+1.000001
+- Improved docs
+
+1.000000
+- Released
+
