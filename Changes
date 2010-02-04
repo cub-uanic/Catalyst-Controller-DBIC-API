@@ -1,6 +1,10 @@
 Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
+**************************************************************
+** THIS RELEASE GUARANTEES TO BREAK BACKWARDS COMPATIBILITY **
+**************************************************************
+
 - Merge create and update into update_or_create
 - object is much advanced now:
       + Identifier can be omitted, and data_root in the request is interpreted
@@ -16,10 +20,16 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Extending is now explicitly done via Moose method modifiers
 - The only portion of the stash in use is to allow runtime definition of create/update_allows
 - list is now broken down into several steps:
-      + list_munge_parameters
-      + list_perform_search
-      + list_format_output
-      + row_format_output (which is just a passthrough per row)
+    + list_munge_parameters
+    + list_perform_search
+    + list_format_output
+    + row_format_output (which is just a passthrough per row)
+- Search can now take an array of hashrefs to give the ability to use the default 'OR' 
+- By default search_parameters is an ArrayRef[HashRef] which is pertinent to list_munge_parameters
+- More thorough documentation of the various bits and pieces.
+    + Documentation now uses Pod::Weaver and Plugin::PodWeaver (weaver.ini added)
+- The distribution is now managed by Dist::Zilla
+- And some more likely forgotten.
 
 1.004002
 - Implement 'as' as a complement to 'select'

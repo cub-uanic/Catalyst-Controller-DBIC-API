@@ -237,7 +237,7 @@ Like the synopsis in DBIC::API shows, you can declare a "template" of what is al
         },
     );
 
-=attribute_public search is: ro, isa: HashRef
+=attribute_public search is: ro, isa: L<Catalyst::Controller::DBIC::API::Types/SearchParameters>
 
 search contains the raw search parameters. Upon setting, a trigger will fire to format them, set search_parameters, and set search_attributes.
 
@@ -286,7 +286,7 @@ Please see L</generate_parameters_attributes> for details on how the format work
         },
     );
 
-=attribute_public search_parameters is:ro, isa: L<Catalyst::Controller::DBIC::API/Types/SearchParameters>
+=attribute_public search_parameters is:ro, isa: L<Catalyst::Controller::DBIC::API::Types/SearchParameters>
 
 search_parameters stores the formatted search parameters that will be passed to ->search
 

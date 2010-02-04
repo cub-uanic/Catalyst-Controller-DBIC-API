@@ -301,7 +301,7 @@ The goal of this method is to call ->search() on the current_result_set, HashRef
 
 If the L</select> config param is defined then the hashes will contain only those columns, otherwise all columns in the object will be returned. L</select> of course supports the function/procedure calling semantics that L<DBIx::Class::ResultSet/select>. In order to have proper column names in the result, provide arguments in L</as> (which also follows L<DBIx::Class::ResultSet/as> semantics. Similarly L</count>, L</page>, L</grouped_by> and L</ordered_by> affect the maximum number of rows returned as well as the ordering and grouping. Note that if select, count, ordered_by or grouped_by request parameters are present then these will override the values set on the class with select becoming bound by the select_exposes attribute.
 
-If not all objects in the resultset are required then it's possible to pass conditions to the method as request parameters. You can use a JSON string as the 'search' parameter for maximum flexibility or use L</CGI::Expand> syntax. In the second case the request parameters are expanded into a structure and then used as the search condition.
+If not all objects in the resultset are required then it's possible to pass conditions to the method as request parameters. You can use a JSON string as the 'search' parameter for maximum flexibility or use L<CGI::Expand> syntax. In the second case the request parameters are expanded into a structure and then used as the search condition.
 
 For example, these request parameters:
 
@@ -923,7 +923,7 @@ For example if you wanted create to return the JSON for the newly created object
   BEGIN { extends 'MyApp::ControllerBase::DBIC::API::RPC' };
   ...
 
-It should be noted that the L</return_object> attribute will produce the above result for you, free of charge.
+It should be noted that the return_object attribute will produce the above result for you, free of charge.
 
 For REST the only difference besides the class names would be that create should be :Private rather than an endpoint.
 
