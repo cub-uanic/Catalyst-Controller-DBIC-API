@@ -715,7 +715,7 @@ sub end :Private
     {
         $DB::single = 1;
         my $returned_objects = [];
-        map {my %inflated = $_->[0]->get_inflated_columns; push(@$returned_objects, \%inflated) } $c->req->all_objects;
+        push(@$returned_objects, $self->each_object_inflate($c, $_)) for map { $_->[0] } $c->req->all_objects;
         $c->stash->{response}->{$self->data_root} = scalar(@$returned_objects) > 1 ? $returned_objects : $returned_objects->[0];
     }
 
@@ -723,11 +723,23 @@ sub end :Private
     $c->forward('serialize');
 }
 
-# from Catalyst::Action::Serialize
-sub serialize :ActionClass('Serialize') {
-    my ($self, $c) = @_;
+=method_protected each_object_inflate
 
+each_object_inflate executes during L</end> and allows hooking into the process of inflating the objects to return in the response. Receives, the context, and the object as arguments.
+
+This only executes if L</return_object> if set and if there are any objects to actually return.
+
+=cut
+
+sub each_object_inflate
+{
+    my ($self, $c, $object) = @_;
+
+    return { $object->get_inflated_columns };
 }
+
+# from Catalyst::Action::Serialize
+sub serialize :ActionClass('Serialize') { }
 
 =method_protected push_error
 
