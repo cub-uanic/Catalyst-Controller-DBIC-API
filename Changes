@@ -1,6 +1,10 @@
 Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
+
+- Fixed missing requirement for MooseX::Types::Structured
+
+2.001001
 **************************************************************
 ** THIS RELEASE GUARANTEES TO BREAK BACKWARDS COMPATIBILITY **
 **************************************************************
