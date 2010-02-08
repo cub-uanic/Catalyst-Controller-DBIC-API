@@ -90,6 +90,20 @@ page is what page to return while paging
         predicate => 'has_page',
     );
 
+=attribute_public offset is ro, isa: Int
+
+offset specifies where to start the paged result (think SQL LIMIT)
+
+=cut
+
+    has 'offset' =>
+    (
+        is => 'ro',
+        writer => '_set_offset',
+        isa => Int,
+        predicate => 'has_offset',
+    );
+
 =attribute_public ordered_by is: ro, isa: L<Catalyst::Controller::DBIC::API::Types/OrderedBy>
 
 ordered_by is passed to ->search to determine sorting
@@ -460,6 +474,7 @@ request_data holds the raw (but deserialized) data for ths request
             $self->_set_search($new->{$controller->search_arg}) if exists $new->{$controller->search_arg};
             $self->_set_count($new->{$controller->count_arg}) if exists $new->{$controller->count_arg};
             $self->_set_page($new->{$controller->page_arg}) if exists $new->{$controller->page_arg};
+            $self->_set_offset($new->{$controller->offset_arg}) if exists $new->{$controller->offset_arg};
         }
     );
 
@@ -562,9 +577,19 @@ This builder method generates the search attributes
             as => $self->as || ((scalar(@{$static->as})) ? $static->as : undef),
             prefetch => $self->prefetch || $static->prefetch || undef,
             rows => $self->count || $static->count,
-            page => $self->page,
+            offset => $self->offset,
             join => $self->build_joins,
         };
+
+        if($self->has_page)
+        {
+            $search_attributes->{page} = $self->page;
+        }
+        elsif(!$self->has_page && defined($search_attributes->{offset}) && defined($search_attributes->{rows}))
+        {
+            $search_attributes->{page} = $search_attributes->{offset} / $search_attributes->{rows} + 1;
+        }
+        
 
         $search_attributes = 
         {   
