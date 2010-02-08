@@ -2,7 +2,6 @@ package Catalyst::Controller::DBIC::API::Request;
 
 #ABSTRACT: Provides a role to be applied to the Request object
 use Moose::Role;
-use MooseX::Aliases;
 use MooseX::Types::Moose(':all');
 use namespace::autoclean;
 
