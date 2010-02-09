@@ -2,6 +2,8 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
 
+2.001002  2010-02-09 01:01:57 America/Chicago
+
 - Fixed missing requirement for MooseX::Types::Structured
 - Fixed MooseX::Aliases usage (we don't any more)
 - Object inflation during end was broken out into its own method: each_object_inflate
