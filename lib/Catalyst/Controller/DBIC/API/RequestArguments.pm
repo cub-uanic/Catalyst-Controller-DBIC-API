@@ -471,10 +471,10 @@ request_data holds the raw (but deserialized) data for ths request
             $self->_set_as($new->{$controller->as_arg}) if exists $new->{$controller->as_arg};
             $self->_set_grouped_by($new->{$controller->grouped_by_arg}) if exists $new->{$controller->grouped_by_arg};
             $self->_set_ordered_by($new->{$controller->ordered_by_arg}) if exists $new->{$controller->ordered_by_arg};
-            $self->_set_search($new->{$controller->search_arg}) if exists $new->{$controller->search_arg};
             $self->_set_count($new->{$controller->count_arg}) if exists $new->{$controller->count_arg};
             $self->_set_page($new->{$controller->page_arg}) if exists $new->{$controller->page_arg};
             $self->_set_offset($new->{$controller->offset_arg}) if exists $new->{$controller->offset_arg};
+            $self->_set_search($new->{$controller->search_arg}) if exists $new->{$controller->search_arg};
         }
     );
 
@@ -588,6 +588,7 @@ This builder method generates the search attributes
         elsif(!$self->has_page && defined($search_attributes->{offset}) && defined($search_attributes->{rows}))
         {
             $search_attributes->{page} = $search_attributes->{offset} / $search_attributes->{rows} + 1;
+            delete $search_attributes->{offset};
         }
         
 
