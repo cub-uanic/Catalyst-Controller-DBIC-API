@@ -369,12 +369,7 @@ sub list_perform_search
         $req->_set_current_result_set($rs);
 
         $req->_set_search_total_entries($req->current_result_set->pager->total_entries)
-            if $req->has_search_attributes && 
-            (
-                (exists($req->search_attributes->{page}) && defined($req->search_attributes->{page}) && length($req->search_attributes->{page}))
-                ||(exists($req->search_attributes->{offset}) && defined($req->search_attributes->{offset}) && length($req->search_attributes->{offset})) 
-                ||(exists($req->search_attributes->{rows}) && defined($req->search_attributes->{rows}) && length($req->search_attributes->{rows}))
-            );
+            if $req->has_search_attributes && (exists($req->search_attributes->{page}) && defined($req->search_attributes->{page}) && length($req->search_attributes->{page}));
     }
     catch
     {
