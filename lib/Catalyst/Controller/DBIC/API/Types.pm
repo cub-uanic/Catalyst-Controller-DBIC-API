@@ -38,7 +38,7 @@ Coerces Str.
 =cut
 
 subtype OrderedBy, as Maybe[ArrayRef[Str|HashRef|ScalarRef]];
-coerce OrderedBy, from Str, via { [$_] };
+coerce OrderedBy, from Str, via { [$_] }, from HashRef, via { [$_] };
 
 =type SelectColumns as Maybe[ArrayRef[Str|HashRef]]
 
@@ -49,7 +49,7 @@ Coerces Str.
 =cut
 
 subtype SelectColumns, as Maybe[ArrayRef[Str|HashRef]];
-coerce SelectColumns, from Str, via { [$_] };
+coerce SelectColumns, from Str, via { [$_] }, from HashRef, via { [$_] };
 
 =type SearchParameters as Maybe[ArrayRef[HashRef]]
 
