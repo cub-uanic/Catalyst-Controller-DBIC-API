@@ -432,7 +432,7 @@ sub row_format_output { shift; shift; } # passthrough by default
 
  :Private
 
-update_or_create is responsible for iterating any stored objects and performing updates or creates. Each object is first validated to ensure it meets the criteria specified in the L</create_requires> and L</create_allows> (or L</update_allows>) parameters of the controller config. The objects are then committed within a transaction via L</transact_objects>.
+update_or_create is responsible for iterating any stored objects and performing updates or creates. Each object is first validated to ensure it meets the criteria specified in the L</create_requires> and L</create_allows> (or L</update_allows>) parameters of the controller config. The objects are then committed within a transaction via L</transact_objects> using a closure around L</save_objects>.
 
 =cut
 
@@ -444,7 +444,7 @@ sub update_or_create :Private
     if($c->req->has_objects)
     {
         $self->validate_objects($c);
-        $self->transact_objects($c, \&save_objects);
+        $self->transact_objects($c, sub { $self->save_objects(@_) } );
     }
     else
     {
@@ -606,7 +606,7 @@ sub validate_object
 
  :Private
 
-delete operates on the stored objects in the request. It first transacts the objects, deleting them in the database, and then clears the request store of objects.
+delete operates on the stored objects in the request. It first transacts the objects, deleting them in the database using L</transact_objects> and a closure around L</delete_objects>, and then clears the request store of objects.
 
 =cut
 
@@ -617,7 +617,7 @@ sub delete :Private
     
     if($c->req->has_objects)
     {
-        $self->transact_objects($c, \&delete_objects);
+        $self->transact_objects($c, sub { $self->delete_objects(@_) });
         $c->req->clear_objects;
     }
     else
@@ -628,54 +628,117 @@ sub delete :Private
     }
 }
 
-=head1 HELPER FUNCTIONS
+=method_protected save_objects
 
-This functions are only helper functions and should have a void invocant. If they are called as methods, they will die. The only reason they are stored in the class is to allow for customization without rewriting the methods that make use of these helper functions.
-
-=head2 save_objects
-
-This helper function is used by update_or_create to perform the actual database manipulations.
-
-=head2 delete_objects
-
-This helper function is used by delete to perform the actual database delete of objects.
+This method is used by update_or_create to perform the actual database manipulations. It iterates each object calling L</save_object>.
 
 =cut
 
-# NOT A METHOD
 sub save_objects
 {
-    my ($objects) = @_;
-    die 'save_objects coderef had an invocant and shouldn\'t have had one' if blessed($objects);
+    my ($self, $objects) = @_;
 
     foreach my $obj (@$objects)
     {
-        my ($object, $params) = @$obj;
-
-        if ($object->in_storage) {
-            foreach my $key (keys %{$params}) {
-                my $value = $params->{$key};
-                if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false)) {
-                    my $related_params = delete $params->{$key};
-                    my $row = $object->find_related($key, {} , {});
-                    $row->update($related_params);
-                }
-            }
-            $object->update($params);
-        } else {
-            $object->set_columns($params);
-            $object->insert;
-        }
+        $self->save_object($obj);
     }
 }
 
-# NOT A METHOD
+=method_protected save_object
+
+save_object first checks to see if the object is already in storage. If so, it calls L</update_object_from_params> otherwise it calls L</insert_object_from_params>
+
+=cut
+
+sub save_object
+{
+    my ($self, $obj) = @_;
+
+    my ($object, $params) = @$obj;
+
+    if ($object->in_storage)
+    {
+        $self->update_object_from_params($object, $params);
+    }
+    else 
+    {
+        $self->insert_object_from_params($object, $params);
+    }
+
+}
+
+=method_protected update_object_from_params
+
+update_object_from_params iterates through the params to see if any of them are pertinent to relations. If so it calls L</update_object_relation> with the object, and the relation parameters. Then it calls ->upbdate on the object.
+
+=cut
+
+sub update_object_from_params
+{
+    my ($self, $object, $params) = @_;
+
+    foreach my $key (keys %$params)
+    {
+        my $value = $params->{$key};
+        if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false))
+        {
+            $self->update_object_relation($object, delete $params->{$key}, $key);
+        }
+    }
+    
+    $object->update($params);
+}
+
+=method_protected update_object_relation
+
+update_object_relation finds the relation to the object, then calls ->update with the specified parameters
+
+=cut
+
+sub update_object_relation
+{
+    my ($self, $object, $related_params, $relation) = @_;
+    my $row = $object->find_related($relation, {} , {});
+    $row->update($related_params);
+}
+
+=method_protected insert_object_from_params
+
+insert_object_from_params sets the columns for the object, then calls ->insert
+
+=cut
+
+sub insert_object_from_params
+{
+    my ($self, $object, $params) = @_;
+    $object->set_columns($params);
+    $object->insert;
+}
+
+=method_protected delete_objects
+
+delete_objects iterates through each object calling L</delete_object>
+
+=cut
+
 sub delete_objects
 {
-    my ($objects) = @_;
-    die 'delete_objects coderef had an invocant and shouldn\'t have had one' if blessed($objects);
+    my ($self, $objects) = @_;
 
-    map { $_->[0]->delete } @$objects;
+    map { $self->delete_object($_->[0]) } @$objects;
+}
+
+=method_protected delete_object
+
+Performs the actual ->delete on the object
+
+=cut
+
+sub delete_object
+{
+    my ($self, $object) = @_;
+
+    $object->delete;
 }
 
 =method_protected end

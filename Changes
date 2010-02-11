@@ -2,6 +2,10 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
 
+- Fill out some coercions to allow more complex search criteria (like sort order)
+- Promote the helper functions into full methods
+- Allow iterative customization by breaking down the save_objects into several discrete steps
+
 2.001002  2010-02-09 01:01:57 America/Chicago
 
 - Fixed missing requirement for MooseX::Types::Structured
