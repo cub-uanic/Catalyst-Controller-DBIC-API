@@ -444,7 +444,7 @@ sub update_or_create :Private
     if($c->req->has_objects)
     {
         $self->validate_objects($c);
-        $self->transact_objects($c, sub { $self->save_objects(@_) } );
+        $self->transact_objects($c, sub { $self->save_objects($c, @_) } );
     }
     else
     {
@@ -617,7 +617,7 @@ sub delete :Private
     
     if($c->req->has_objects)
     {
-        $self->transact_objects($c, sub { $self->delete_objects(@_) });
+        $self->transact_objects($c, sub { $self->delete_objects($c, @_) });
         $c->req->clear_objects;
     }
     else
@@ -636,11 +636,11 @@ This method is used by update_or_create to perform the actual database manipulat
 
 sub save_objects
 {
-    my ($self, $objects) = @_;
+    my ($self, $c, $objects) = @_;
 
     foreach my $obj (@$objects)
     {
-        $self->save_object($obj);
+        $self->save_object($c, $obj);
     }
 }
 
@@ -652,17 +652,17 @@ save_object first checks to see if the object is already in storage. If so, it c
 
 sub save_object
 {
-    my ($self, $obj) = @_;
+    my ($self, $c, $obj) = @_;
 
     my ($object, $params) = @$obj;
 
     if ($object->in_storage)
     {
-        $self->update_object_from_params($object, $params);
+        $self->update_object_from_params($c, $object, $params);
     }
     else 
     {
-        $self->insert_object_from_params($object, $params);
+        $self->insert_object_from_params($c, $object, $params);
     }
 
 }
@@ -675,14 +675,14 @@ update_object_from_params iterates through the params to see if any of them are 
 
 sub update_object_from_params
 {
-    my ($self, $object, $params) = @_;
+    my ($self, $c, $object, $params) = @_;
 
     foreach my $key (keys %$params)
     {
         my $value = $params->{$key};
         if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false))
         {
-            $self->update_object_relation($object, delete $params->{$key}, $key);
+            $self->update_object_relation($c, $object, delete $params->{$key}, $key);
         }
     }
     
@@ -697,7 +697,7 @@ update_object_relation finds the relation to the object, then calls ->update wit
 
 sub update_object_relation
 {
-    my ($self, $object, $related_params, $relation) = @_;
+    my ($self, $c, $object, $related_params, $relation) = @_;
     my $row = $object->find_related($relation, {} , {});
     $row->update($related_params);
 }
@@ -710,7 +710,7 @@ insert_object_from_params sets the columns for the object, then calls ->insert
 
 sub insert_object_from_params
 {
-    my ($self, $object, $params) = @_;
+    my ($self, $c, $object, $params) = @_;
     $object->set_columns($params);
     $object->insert;
 }
@@ -723,9 +723,9 @@ delete_objects iterates through each object calling L</delete_object>
 
 sub delete_objects
 {
-    my ($self, $objects) = @_;
+    my ($self, $c, $objects) = @_;
 
-    map { $self->delete_object($_->[0]) } @$objects;
+    map { $self->delete_object($c, $_->[0]) } @$objects;
 }
 
 =method_protected delete_object
@@ -736,7 +736,7 @@ Performs the actual ->delete on the object
 
 sub delete_object
 {
-    my ($self, $object) = @_;
+    my ($self, $c, $object) = @_;
 
     $object->delete;
 }
