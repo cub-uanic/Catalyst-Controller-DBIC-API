@@ -2,6 +2,8 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
 
+2.001003  2010-02-12 19:01:56 America/Chicago
+
 - Fill out some coercions to allow more complex search criteria (like sort order)
 - Promote the helper functions into full methods
 - Allow iterative customization by breaking down the save_objects into several discrete steps
