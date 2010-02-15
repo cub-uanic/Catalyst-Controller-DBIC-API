@@ -488,7 +488,6 @@ format_search_parameters iterates through the provided params ArrayRef, calling 
 
     method format_search_parameters => sub
     {
-        $DB::single = 1;
         my ($self, $params) = @_;
         
         my $genparams = [];
@@ -509,7 +508,6 @@ generate_column_parameters recursively generates properly aliased parameters for
 
     method generate_column_parameters => sub
     {
-        $DB::single = 1;
         my ($self, $source, $param, $join, $base) = @_;
         $base ||= 'me';
         my $search_params;
@@ -553,7 +551,6 @@ generate_parameters_attributes takes the raw search arguments and formats the pa
 
     method generate_parameters_attributes => sub
     {
-        $DB::single = 1;
         my ($self, $args) = @_;
 
         return ( $self->format_search_parameters($args), $self->search_attributes );

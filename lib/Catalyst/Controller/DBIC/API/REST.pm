@@ -73,7 +73,6 @@ sub base_POST {
 
 sub base_DELETE {
 	my ( $self, $c ) = @_;
-    $DB::single =1;
     $c->forward('object');
     return if $self->get_errors($c);
     $c->forward('delete');

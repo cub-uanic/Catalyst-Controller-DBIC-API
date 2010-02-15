@@ -66,7 +66,6 @@ A begin method is provided to apply the L<Catalyst::Controller::DBIC::API::Reque
 
 sub begin :Private
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
     
     Catalyst::Controller::DBIC::API::Request->meta->apply($c->req)
@@ -102,7 +101,6 @@ This action will populate $c->req->current_result_set with $self->stored_result_
 
 sub setup :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config')
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
 
     $c->req->_set_current_result_set($self->stored_result_source->resultset);
@@ -209,7 +207,6 @@ It should be noted that arguments can used mixed modes in with some caveats. Eac
 
 sub deserialize :ActionClass('Deserialize')
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
     my $req_params;
 
@@ -270,7 +267,6 @@ inflate_request is called at the end of deserialize to populate key portions of 
 
 sub inflate_request
 {
-    $DB::single = 1;
     my ($self, $c, $params) = @_;
 
     try
@@ -329,7 +325,6 @@ Would result in this search:
 
 sub list :Private 
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
 
     $self->list_munge_parameters($c);
@@ -353,7 +348,6 @@ list_perform_search executes the actual search. current_result_set is updated to
 
 sub list_perform_search
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
     
     try 
@@ -387,7 +381,6 @@ list_format_output prepares the response for transmission across the wire. A cop
 
 sub list_format_output
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
 
     my $rs = $c->req->current_result_set->search;
@@ -438,7 +431,6 @@ update_or_create is responsible for iterating any stored objects and performing 
 
 sub update_or_create :Private
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
     
     if($c->req->has_objects)
@@ -462,7 +454,6 @@ transact_objects performs the actual commit to the database via $schema->txn_do.
 
 sub transact_objects
 {
-    $DB::single = 1;
     my ($self, $c, $coderef) = @_;
     
     try
@@ -489,7 +480,6 @@ This is a shortcut method for performing validation on all of the stored objects
 
 sub validate_objects
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
 
     try
@@ -517,7 +507,6 @@ validate_object takes the context and the object as an argument. It then filters
 
 sub validate_object
 {
-    $DB::single = 1;
     my ($self, $c, $obj) = @_;
     my ($object, $params) = @$obj;
 
@@ -612,7 +601,6 @@ delete operates on the stored objects in the request. It first transacts the obj
 
 sub delete :Private
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
     
     if($c->req->has_objects)
@@ -751,7 +739,6 @@ end performs the final manipulation of the response before it is serialized. Thi
 
 sub end :Private 
 {
-    $DB::single = 1;
     my ($self, $c) = @_;
 
     # check for errors
@@ -776,7 +763,6 @@ sub end :Private
     }
     elsif($self->return_object && $c->req->has_objects)
     {
-        $DB::single = 1;
         my $returned_objects = [];
         push(@$returned_objects, $self->each_object_inflate($c, $_)) for map { $_->[0] } $c->req->all_objects;
         $c->stash->{response}->{$self->data_root} = scalar(@$returned_objects) > 1 ? $returned_objects : $returned_objects->[0];
