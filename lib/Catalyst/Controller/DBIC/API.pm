@@ -393,7 +393,7 @@ sub list_format_output
         
         foreach my $row ($rs->all)
         {
-            push(@$formatted, $self->row_format_output($row));
+            push(@$formatted, $self->row_format_output($c, $row));
         }
         
         $output->{$self->data_root} = $formatted;
@@ -415,11 +415,15 @@ sub list_format_output
 
 =method_protected row_format_output
 
-row_format_output is called each row of the inflated output generated from the search. It receives only one argument, the hashref that represents the row. By default, this method is merely a passthrough.
+row_format_output is called each row of the inflated output generated from the search. It receives two arguments, the catalyst context and the hashref that represents the row. By default, this method is merely a passthrough.
 
 =cut
 
-sub row_format_output { shift; shift; } # passthrough by default
+sub row_format_output
+{
+    my ($self, $c, $row) = @_;
+    return $row; # passthrough by default
+}
 
 =method_protected update_or_create
 
