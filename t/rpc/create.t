@@ -60,7 +60,6 @@ my $producer_create_url = "$base/api/rpc/producer/create";
 
 # test stash config handling
 {
-    $DB::single = 1;
   my $req = POST( $any_artist_create_url, {
 	  name => 'queen monkey'
   }, 'Accept' => 'text/json' );

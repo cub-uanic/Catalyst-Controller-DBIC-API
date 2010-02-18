@@ -59,7 +59,6 @@ my $producer_list_url = "$base/api/rest/producer";
 }
 
 {
-    $DB::single = 1;
   my $uri = URI->new( $producer_list_url );
   my $req = GET( $uri, 'Accept' => 'text/x-json' );
   $mech->request($req);
