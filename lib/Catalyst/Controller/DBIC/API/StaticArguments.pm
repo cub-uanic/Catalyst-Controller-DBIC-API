@@ -122,7 +122,7 @@ prefetch_arg controls how to reference 'prefetch' in the the request_data
 
 has 'prefetch_arg' => ( is => 'ro', isa => Str, default => 'list_prefetch' );
 
-=attribute_public data_root is: ro, isa: Str, default: 'listt'
+=attribute_public data_root is: ro, isa: Str, default: 'list'
 
 data_root controls how to reference where the data is in the the request_data
 

@@ -50,10 +50,7 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
 
-sub base : Chained('setup') PathPart('') ActionClass('REST') Args {
-	my ( $self, $c ) = @_;
-
-}
+sub base : Chained('setup') PathPart('') ActionClass('REST') Args {}
 
 sub base_PUT {
 	my ( $self, $c ) = @_;

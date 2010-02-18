@@ -122,7 +122,7 @@ sub object :Chained('setup') :CaptureArgs(1) :PathPart('')
     unless(defined($vals))
     {
         # no data root, assume the request_data itself is the payload
-        $vals = [$c->req->request_data || {}];
+        $vals = [$c->req->request_data];
     }
     elsif(reftype($vals) eq 'HASH')
     {
@@ -293,7 +293,7 @@ sub inflate_request
 
 List level action chained from L</setup>. List's steps are broken up into three distinct methods: L</list_munge_parameters>, L</list_perform_search>, and L</list_format_output>.
 
-The goal of this method is to call ->search() on the current_result_set, HashRefInflator the result, and return it in $c->stash->{response}->{$self->data_root}. Pleasee see the individual methods for more details on what actual processing takes place.
+The goal of this method is to call ->search() on the current_result_set, HashRefInflator the result, and return it in $c->stash->{response}->{$self->data_root}. Please see the individual methods for more details on what actual processing takes place.
 
 If the L</select> config param is defined then the hashes will contain only those columns, otherwise all columns in the object will be returned. L</select> of course supports the function/procedure calling semantics that L<DBIx::Class::ResultSet/select>. In order to have proper column names in the result, provide arguments in L</as> (which also follows L<DBIx::Class::ResultSet/as> semantics. Similarly L</count>, L</page>, L</grouped_by> and L</ordered_by> affect the maximum number of rows returned as well as the ordering and grouping. Note that if select, count, ordered_by or grouped_by request parameters are present then these will override the values set on the class with select becoming bound by the select_exposes attribute.
 
