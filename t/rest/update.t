@@ -10,7 +10,7 @@ my $content_type = [ 'Content-Type', 'application/x-www-form-urlencoded' ];
 
 use RestTest;
 use DBICTest;
-use Test::More tests => 15;
+use Test::More tests => 16;
 use Test::WWW::Mechanize::Catalyst 'RestTest';
 use HTTP::Request::Common;
 use JSON::Any;
@@ -71,7 +71,7 @@ my $track_update_url = "$base/api/rest/track/" . $track->id;
 }
 
 {
-	my $test_data = JSON::Any->Dump({ title => 'monkey monkey' });
+	my $test_data = JSON::Any->Dump({ title => 'monkey monkey', 'cd.year' => 2009 });
 	my $req = POST( $track_update_url, Content => $test_data );
 	$req->content_type('text/x-json');
 	$mech->request($req);
@@ -80,4 +80,5 @@ my $track_update_url = "$base/api/rest/track/" . $track->id;
 
 	$track->discard_changes;
 	is($track->title, 'monkey monkey', 'Title changed to "monkey monkey"');
+	is($track->cd->year, 2009, 'related row updated');
 }
