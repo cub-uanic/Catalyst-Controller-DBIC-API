@@ -22,6 +22,7 @@ By default provides the following endpoints:
 
   $base/create
   $base/list
+  $base/id/[identifier]
   $base/id/[identifier]/delete
   $base/id/[identifier]/update
 
@@ -40,14 +41,6 @@ As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the cha
 	...
   );
 
-=method_protected object
-
-Chained: L</setup>
-PathPart: object
-CaptureArgs: 1
-
-Provides an chain point to the functionality described in L<Catalyst::Controller::DBIC::API/object>. All object level endpoints should use this as their chain root.
-
 =cut
 
 sub index : Chained('setup') PathPart('') Args(0) {
@@ -59,7 +52,7 @@ sub index : Chained('setup') PathPart('') Args(0) {
 
 =method_protected create
 
-Chained: L</setup>
+Chained: L</object_no_id>
 PathPart: create
 CaptureArgs: 0
 
@@ -67,17 +60,15 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub create :Chained('setup') :PathPart('create') :Args(0)
+sub create :Chained('object_no_id') :PathPart('create') :Args(0)
 {
 	my ($self, $c) = @_;
-    $c->forward('object');
-    return if $self->get_errors($c);
     $c->forward('update_or_create');
 }
 
 =method_protected list
 
-Chained: L</setup>
+Chained: L</deserialize>
 PathPart: list
 CaptureArgs: 0
 
@@ -85,42 +76,90 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub list :Chained('setup') :PathPart('list') :Args(0) {
+sub list :Chained('deserialize') :PathPart('list') :Args(0) {
 	my ($self, $c) = @_;
 
         $self->next::method($c);
 }
 
+=method_protected item
+
+Chained: L</object_with_id>
+PathPart: ''
+Args: 0
+
+Provides an endpoint to the functionality described in L<Catalyst::Controller::DBIC::API/item>.
+
+=cut
+
+sub item :Chained('object_with_id') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->forward('view');
+}
+
 =method_protected update
 
-Chained: L</object>
+Chained: L</object_with_id>
 PathPart: update
-CaptureArgs: 0
+Args: 0
 
 Provides an endpoint to the functionality described in L<Catalyst::Controller::DBIC::API/update_or_create>.
 
 =cut
 
-sub update :Chained('object') :PathPart('update') :Args(0) {
-	my ($self, $c) = @_;
+sub update :Chained('object_with_id') :PathPart('update') :Args(0) {
+    my ($self, $c) = @_;
 
     $c->forward('update_or_create');
 }
 
 =method_protected delete
 
-Chained: L</object>
+Chained: L</object_with_id>
 PathPart: delete
-CaptureArgs: 0
+Args: 0
 
 Provides an endpoint to the functionality described in L<Catalyst::Controller::DBIC::API/delete>.
 
 =cut
 
-sub delete :Chained('object') :PathPart('delete') :Args(0) {
-	my ($self, $c) = @_;
+sub delete :Chained('object_with_id') :PathPart('delete') :Args(0)
+{
+    my ($self, $c) = @_;
+    $self->next::method($c);
+}
 
-        $self->next::method($c);
+=method_protected update_bulk
+
+Chained: L</object_no_id>
+PathPart: update
+Args: 0
+
+Provides an endpoint to the functionality described in L<Catalyst::Controller::DBIC::API/update_or_create> for multiple objects.
+
+=cut
+
+sub update_bulk :Chained('object_no_id') :PathPart('update') :Args(0)
+{
+    my ($self, $c) = @_;
+    $c->forward('update_or_create');
+}
+
+=method_protected delete_bulk
+
+Chained: L</object_no_id>
+PathPart: delete
+Args: 0
+
+Provides an endpoint to the functionality described in L<Catalyst::Controller::DBIC::API/delete> for multiple objects.
+
+=cut
+
+sub delete_bulk :Chained('object_no_id') :PathPart('delete') :Args(0)
+{
+    my ($self, $c) = @_;
+    $self->next::method($c);
 }
 
 1;

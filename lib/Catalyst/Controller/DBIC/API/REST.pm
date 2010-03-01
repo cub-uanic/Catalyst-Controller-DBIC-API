@@ -18,8 +18,8 @@ Provides a REST style API interface to the functionality described in L<Catalyst
 
 By default provides the following endpoints:
 
-  $base (accepts PUT and GET)
-  $base/[identifier] (accepts POST and DELETE)
+  $base (operates on lists of objects and accepts GET, PUT, POST and DELETE)
+  $base/[identifier] (operates on a single object and accepts GET, PUT, POST and DELETE)
 
 Where $base is the URI described by L</setup>, the chain root of the controller, and the request type will determine the L<Catalyst::Controller::DBIC::API> method to forward.
 
@@ -36,16 +36,16 @@ As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the cha
 	...
   );
 
-=method_protected base
+=method_protected no_id
 
-Chained: L</setup>
+Chained: L</object_no_id>
 PathPart: none
 CaptureArgs: 0
 
 Forwards to list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
 
-DELETE: forwards to L<Catalyst::Controller::DBIC::API/object> then L<Catalyst::Controller::DBIC::API/delete>
-POST/PUT: forwards to L<Catalyst::Controller::DBIC::API/object> then L<Catalyst::Controller::DBIC::API/update_or_create>
+DELETE: L<Catalyst::Controller::DBIC::API/delete>
+POST/PUT: L<Catalyst::Controller::DBIC::API/update_or_create>
 GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
@@ -75,6 +75,20 @@ sub no_id_GET
 	my ( $self, $c ) = @_;
 	$c->forward('list');
 }
+
+=method_protected with_id
+
+Chained: L</object_with_id>
+PathPart: none
+CaptureArgs: 0
+
+Forwards to list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
+
+DELETE: L<Catalyst::Controller::DBIC::API/delete>
+POST/PUT: L<Catalyst::Controller::DBIC::API/update_or_create>
+GET: forwards to L<Catalyst::Controller::DBIC::API/item>
+
+=cut
 
 sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') :CaptureArgs(0) {}
 

@@ -32,6 +32,7 @@ has objects =>
         count_objects => 'count',
         has_objects => 'count',
         clear_objects => 'clear',
+        get_object => 'get',
     },
 );
 

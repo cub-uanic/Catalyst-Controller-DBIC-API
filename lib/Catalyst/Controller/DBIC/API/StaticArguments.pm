@@ -130,6 +130,15 @@ data_root controls how to reference where the data is in the the request_data
 
 has 'data_root' => ( is => 'ro', isa => Str, default => 'list');
 
+=attribute_public item_root is: ro, isa: Str, default: 'data'
+
+item_root controls how to reference where the data for single object
+requests is in the the request_data
+
+=cut
+
+has 'item_root' => ( is => 'ro', isa => Str, default => 'data');
+
 =attribute_public total_entries_arg is: ro, isa: Str, default: 'totalcount'
 
 total_entries_arg controls how to reference 'total_entries' in the the request_data

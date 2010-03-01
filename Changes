@@ -4,6 +4,8 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 - Remove debugging code from tests
 - Fixed some typos and code cleanups
+- Added possibility to fetch a single object by id + tests using 'item'
+- Added item_root attribute which defaults to 'data' and is used as data root for 'item'
 
 2.001003  2010-02-12 19:01:56 America/Chicago
 

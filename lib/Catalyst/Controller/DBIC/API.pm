@@ -421,6 +421,31 @@ sub row_format_output
     return $row; # passthrough by default
 }
 
+=method_protected item
+ 
+ :Private
+
+item will return a single object called by identifier in the uri. It will be inflated via each_object_inflate.
+
+=cut
+
+sub item :Private 
+{
+    my ($self, $c) = @_;
+
+    if($c->req->count_objects != 1)
+    {
+        $c->log->error($_);
+        $self->push_error($c, { message => 'No objects on which to operate' });
+        $c->detach();
+    }
+    else
+    {
+        $c->stash->{response}->{$self->item_root} = $self->each_object_inflate($c, $c->req->get_object(0));
+    }
+}
+
+
 =method_protected update_or_create
 
  :Private
