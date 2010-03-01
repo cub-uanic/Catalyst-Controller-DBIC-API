@@ -56,23 +56,6 @@ __PACKAGE__->config();
   # /api/rpc/artist/id/[id]/update
 =cut
 
-=method_protected begin
-
- :Private
-
-A begin method is provided to apply the L<Catalyst::Controller::DBIC::API::Request> role to $c->request, and perform deserialization and validation of request parameters
-
-=cut
-
-sub begin :Private
-{
-    my ($self, $c) = @_;
-    
-    Catalyst::Controller::DBIC::API::Request->meta->apply($c->req)
-        unless Moose::Util::does_role($c->req, 'Catalyst::Controller::DBIC::API::Request');
-    $c->forward('deserialize');
-}
-
 =method_protected setup
 
  :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config')
@@ -103,91 +86,8 @@ sub setup :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('spec
 {
     my ($self, $c) = @_;
 
-    $c->req->_set_current_result_set($self->stored_result_source->resultset);
-}
-
-=method_protected object
-
- :Chained('setup') :CaptureArgs(1) :PathPart('')
-
-This action is the chain root for all object level actions (such as delete and update). If an identifier is passed it will be used to find that particular object and add it to the request's store of objects. Otherwise, the data stored at the data_root of the request_data will be interpreted as an array of objects on which to operate. If the hashes are missing an 'id' key, they will be considered a new object to be created, otherwise, the values in the hash will be used to perform an update. Please see L<Catalyst::Controller::DBIC::API::Context> for more details on the stored objects.
-
-=cut
-
-sub object :Chained('setup') :CaptureArgs(1) :PathPart('')
-{
-	my ($self, $c, $id) = @_;
-
-    my $vals = $c->req->request_data->{$self->data_root};
-    unless(defined($vals))
-    {
-        # no data root, assume the request_data itself is the payload
-        $vals = [$c->req->request_data];
-    }
-    elsif(reftype($vals) eq 'HASH')
-    {
-        $vals = [ $vals ];
-    }
-
-    if(defined($id))
-    {
-        try
-        {
-            # there can be only one set of data
-            $c->req->add_object([$self->object_lookup($c, $id), $vals->[0]]);
-        }
-        catch
-        {
-            $c->log->error($_);
-            $self->push_error($c, { message => $_ });
-            $c->detach();
-        }
-    }
-    else
-    {
-        unless(reftype($vals) eq 'ARRAY')
-        {
-            $c->log->error('Invalid request data');
-            $self->push_error($c, { message => 'Invalid request data' });
-            $c->detach();
-        }
-
-        foreach my $val (@$vals)
-        {
-            unless(exists($val->{id}))
-            {
-                $c->req->add_object([$c->req->current_result_set->new_result({}), $val]);
-                next;
-            }
-
-            try
-            {
-                $c->req->add_object([$self->object_lookup($c, $val->{id}), $val]);
-            }
-            catch
-            {
-                $c->log->error($_);
-                $self->push_error($c, { message => $_ });
-                $c->detach();
-            }
-        }
-    }
-}
-
-=method_protected object_lookup
-
-This method provides the look up functionality for an object based on 'id'. It is passed the current $c and the $id to be used to perform the lookup. Dies if there is no provided $id or if no object was found.
-
-=cut
-
-sub object_lookup
-{
-    my ($self, $c, $id) = @_;
-
-    die 'No valid ID provided for look up' unless defined $id and length $id;
-    my $object = $c->req->current_result_set->find($id);
-    die "No object found for id '$id'" unless defined $object;
-    return $object;
+    Catalyst::Controller::DBIC::API::Request->meta->apply($c->req)
+        unless Moose::Util::does_role($c->req, 'Catalyst::Controller::DBIC::API::Request');
 }
 
 =method_protected deserialize
@@ -205,7 +105,7 @@ It should be noted that arguments can used mixed modes in with some caveats. Eac
 
 =cut
 
-sub deserialize :ActionClass('Deserialize')
+sub deserialize :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('Deserialize')
 {
     my ($self, $c) = @_;
     my $req_params;
@@ -260,7 +160,7 @@ sub deserialize :ActionClass('Deserialize')
 }
 
 =method_protected inflate_request
-
+ 
 inflate_request is called at the end of deserialize to populate key portions of the request with the useful bits
 
 =cut
@@ -276,6 +176,9 @@ sub inflate_request
 
         # set request arguments
         $c->req->_set_request_data($params);
+
+        # set the current resultset
+        $c->req->_set_current_result_set($self->stored_result_source->resultset);
         
     }
     catch
@@ -284,7 +187,100 @@ sub inflate_request
         $self->push_error($c, { message => $_ });
         $c->detach();
     }
-    
+}
+
+=method_protected object_with_id
+
+ :Chained('deserialize') :CaptureArgs(1) :PathPart('')
+
+This action is the chain root for all object level actions (such as delete and update) that operate on a single identifer. The provided identifier will be used to find that particular object and add it to the request's store of objects. Please see L<Catalyst::Controller::DBIC::API::Context> for more details on the stored objects.
+
+=cut
+
+sub object_with_id :Chained('deserialize') :CaptureArgs(1) :PathPart('')
+{
+	my ($self, $c, $id) = @_;
+
+    my $vals = $c->req->request_data->{$self->data_root};
+    unless(defined($vals))
+    {
+        # no data root, assume the request_data itself is the payload
+        $vals = $c->req->request_data;
+    }
+
+    try
+    {
+        # there can be only one set of data
+        $c->req->add_object([$self->object_lookup($c, $id), $vals]);
+    }
+    catch
+    {
+        $c->log->error($_);
+        $self->push_error($c, { message => $_ });
+        $c->detach();
+    }
+}
+
+=method_protected objects_no_id
+
+ :Chained('deserialize') :CaptureArgs(0) :PathPart('')
+
+This action is the chain root for object level actions (such as create, update, or delete) that can involve more than one object. The data stored at the data_root of the request_data will be interpreted as an array of hashes on which to operate. If the hashes are missing an 'id' key, they will be considered a new object to be created. Otherwise, the values in the hash will be used to perform an update. As a special case, a single hash sent will be coerced into an array. Please see L<Catalyst::Controller::DBIC::API::Context> for more details on the stored objects.
+
+=cut
+
+sub objects_no_id :Chained('deserialize') :CaptureArgs(0) :PathPart('')
+{
+    my ($self, $c) = @_;
+
+    my $vals = $c->req->request_data->{$self->data_root};
+    unless(defined($vals))
+    {
+        # no data root, assume the request_data itself is the payload
+        $vals = [$c->req->request_data];
+    }
+    unless(reftype($vals) eq 'ARRAY')
+    {
+        $c->log->error('Invalid request data');
+        $self->push_error($c, { message => 'Invalid request data' });
+        $c->detach();
+    }
+
+    foreach my $val (@$vals)
+    {
+        unless(exists($val->{id}))
+        {
+            $c->req->add_object([$c->req->current_result_set->new_result({}), $val]);
+            next;
+        }
+
+        try
+        {
+            $c->req->add_object([$self->object_lookup($c, $val->{id}), $val]);
+        }
+        catch
+        {
+            $c->log->error($_);
+            $self->push_error($c, { message => $_ });
+            $c->detach();
+        }
+    }
+}
+
+=method_protected object_lookup
+
+This method provides the look up functionality for an object based on 'id'. It is passed the current $c and the $id to be used to perform the lookup. Dies if there is no provided $id or if no object was found.
+
+=cut
+
+sub object_lookup
+{
+    my ($self, $c, $id) = @_;
+
+    die 'No valid ID provided for look up' unless defined $id and length $id;
+    my $object = $c->req->current_result_set->find($id);
+    die "No object found for id '$id'" unless defined $object;
+    return $object;
 }
 
 =method_protected list

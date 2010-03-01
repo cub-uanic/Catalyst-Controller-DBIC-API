@@ -50,35 +50,56 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
 
-sub base : Chained('setup') PathPart('') ActionClass('REST') Args {}
+sub no_id : Chained('object_no_id') PathPart('') ActionClass('REST') :CaptureArgs(0) {}
 
-sub base_PUT {
+sub no_id_PUT
+{
 	my ( $self, $c ) = @_;
-    
-    $c->forward('object');
-    return if $self->get_errors($c);
     $c->forward('update_or_create');
 }
 
-sub base_POST {
+sub no_id_POST
+{
 	my ( $self, $c ) = @_;
-
-    $c->forward('object');
-    return if $self->get_errors($c);
     $c->forward('update_or_create');
 }
 
-sub base_DELETE {
+sub no_id_DELETE
+{
 	my ( $self, $c ) = @_;
-    $c->forward('object');
-    return if $self->get_errors($c);
     $c->forward('delete');
 }
 
-sub base_GET {
+sub no_id_GET
+{
 	my ( $self, $c ) = @_;
-
 	$c->forward('list');
+}
+
+sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') :CaptureArgs(0) {}
+
+sub with_id_PUT
+{
+	my ( $self, $c ) = @_;
+    $c->forward('update_or_create');
+}
+
+sub with_id_POST
+{
+	my ( $self, $c ) = @_;
+    $c->forward('update_or_create');
+}
+
+sub with_id_DELETE
+{
+	my ( $self, $c ) = @_;
+    $c->forward('delete');
+}
+
+sub with_id_GET
+{
+	my ( $self, $c ) = @_;
+	$c->forward('item');
 }
 
 1;
