@@ -173,6 +173,19 @@ sub deserialize :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('De
     $self->inflate_request($c, $req_params);
 }
 
+=method_protected generate_rs
+
+generate_rs is used by inflate_request to generate the resultset stored in the current request. It receives $c as its only argument. And by default it merely returns the resultset from the stored_result_source on the controller. Override this method if you need to manipulate the default implementation of getting the resultset from the controller.
+
+=cut
+
+sub generate_rs
+{
+    my ($self, $c) = @_;
+    return $self->stored_result_source->resultset;
+}
+
+
 =method_protected inflate_request
  
 inflate_request is called at the end of deserialize to populate key portions of the request with the useful bits
@@ -192,7 +205,7 @@ sub inflate_request
         $c->req->_set_request_data($params);
 
         # set the current resultset
-        $c->req->_set_current_result_set($self->stored_result_source->resultset);
+        $c->req->_set_current_result_set($self->generate_rs($c));
         
     }
     catch

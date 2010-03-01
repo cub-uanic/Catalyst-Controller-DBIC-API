@@ -11,6 +11,7 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Chain dispatching has now been fixed to not be as hackish as before
 - Shift around where the current result set is set. setup() now does /nothing/ by default other than be a chain anchor
 - Tests added for updating related keys via REST
+- generate_rs is now used to get the default resultset inside inflate_request
 - PLEASE THOROUGHLY TEST AS SOME BEHAVIOR MAY HAVE BEEN ALTERED SUBTLY WHEN DEALING WITH BULK vs SINGLE ACTIONS
 
 2.001003  2010-02-12 19:01:56 America/Chicago
