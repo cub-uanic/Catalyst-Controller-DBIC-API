@@ -462,10 +462,12 @@ request_data holds the raw (but deserialized) data for ths request
         is => 'ro',
         isa => HashRef,
         writer => '_set_request_data',
+        predicate => 'has_request_data',
         trigger => sub
         {
             my ($self, $new) = @_;
             my $controller = $self->_controller;
+            return unless defined($new) && keys %$new;
             $self->_set_prefetch($new->{$controller->prefetch_arg}) if exists $new->{$controller->prefetch_arg};
             $self->_set_select($new->{$controller->select_arg}) if exists $new->{$controller->select_arg};
             $self->_set_as($new->{$controller->as_arg}) if exists $new->{$controller->as_arg};

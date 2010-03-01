@@ -30,7 +30,7 @@ my $producer_create_url = "$base/api/rest/producer";
 						 );
 	$req->content( $test_data );
 	$mech->request($req);
-
+    
 	cmp_ok( $mech->status, '==', 400, 'attempt without required params caught' );
 	my $response = JSON::Any->Load( $mech->content);
 	like($response->{messages}->[0], qr/No value supplied for name and no default/, 'correct message returned' );

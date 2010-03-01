@@ -71,7 +71,7 @@ my $track_update_url = "$base/api/rest/track/" . $track->id;
 }
 
 {
-	my $test_data = JSON::Any->Dump({ title => 'monkey monkey', 'cd.year' => 2009 });
+	my $test_data = JSON::Any->Dump({ title => 'monkey monkey', 'cd' => { year => 2009 } });
 	my $req = POST( $track_update_url, Content => $test_data );
 	$req->content_type('text/x-json');
 	$mech->request($req);

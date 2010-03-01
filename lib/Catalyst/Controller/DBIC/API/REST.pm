@@ -38,7 +38,7 @@ As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the cha
 
 =method_protected no_id
 
-Chained: L</object_no_id>
+Chained: L</objects_no_id>
 PathPart: none
 CaptureArgs: 0
 
@@ -50,7 +50,7 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
 
-sub no_id : Chained('object_no_id') PathPart('') ActionClass('REST') :CaptureArgs(0) {}
+sub no_id : Chained('objects_no_id') PathPart('') ActionClass('REST') {}
 
 sub no_id_PUT
 {
@@ -90,7 +90,7 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/item>
 
 =cut
 
-sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') :CaptureArgs(0) {}
+sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') {}
 
 sub with_id_PUT
 {

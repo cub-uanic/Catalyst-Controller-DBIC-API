@@ -56,6 +56,23 @@ __PACKAGE__->config();
   # /api/rpc/artist/id/[id]/update
 =cut
 
+=method_private begin
+
+ :Private
+
+begin is provided in the base class to setup the Catalyst Request object, by applying the DBIC::API::Request role.
+
+=cut
+
+sub begin :Private
+{
+    my ($self, $c) = @_;
+
+    Catalyst::Controller::DBIC::API::Request->meta->apply($c->req)
+        unless Moose::Util::does_role($c->req, 'Catalyst::Controller::DBIC::API::Request');
+}
+
+
 =method_protected setup
 
  :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config')
@@ -63,7 +80,8 @@ __PACKAGE__->config();
 This action is the chain root of the controller. It must either be overridden or configured to provide a base pathpart to the action and also a parent action. For example, for class MyAppDB::Track you might have
 
   package MyApp::Controller::API::RPC::Track;
-  use base qw/Catalyst::Controller::DBIC::API::RPC/;
+  use Moose; 
+  BEGIN { extends 'Catalyst::Controller::DBIC::API::RPC'; }
 
   __PACKAGE__->config
     ( action => { setup => { PathPart => 'track', Chained => '/api/rpc/rpc_base' } }, 
@@ -78,19 +96,15 @@ This action is the chain root of the controller. It must either be overridden or
     $self->next::method($c);
   }
 
-This action will populate $c->req->current_result_set with $self->stored_result_source->resultset for other actions in the chain to use.
+This action does nothing by default.
 
 =cut
 
-sub setup :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config')
-{
-    my ($self, $c) = @_;
-
-    Catalyst::Controller::DBIC::API::Request->meta->apply($c->req)
-        unless Moose::Util::does_role($c->req, 'Catalyst::Controller::DBIC::API::Request');
-}
+sub setup :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config') {}
 
 =method_protected deserialize
+
+ :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('Deserialize')
 
 deserialize absorbs the request data and transforms it into useful bits by using CGI::Expand->expand_hash and a smattering of JSON::Any->from_json for a handful of arguments. Current only the following arguments are capable of being expressed as JSON:
 
@@ -101,7 +115,7 @@ deserialize absorbs the request data and transforms it into useful bits by using
     grouped_by_arg
     prefetch_arg
 
-It should be noted that arguments can used mixed modes in with some caveats. Each top level arg can be expressed as CGI::Expand with their immediate child keys expressed as JSON.
+It should be noted that arguments can used mixed modes in with some caveats. Each top level arg can be expressed as CGI::Expand with their immediate child keys expressed as JSON when sending the data application/x-www-form-urlencoded. Otherwise, you can send content as raw json and it will be deserialized as is with no CGI::Expand expasion.
 
 =cut
 
@@ -232,37 +246,54 @@ This action is the chain root for object level actions (such as create, update, 
 sub objects_no_id :Chained('deserialize') :CaptureArgs(0) :PathPart('')
 {
     my ($self, $c) = @_;
-
-    my $vals = $c->req->request_data->{$self->data_root};
-    unless(defined($vals))
+    
+    if($c->req->has_request_data)
     {
-        # no data root, assume the request_data itself is the payload
-        $vals = [$c->req->request_data];
-    }
-    unless(reftype($vals) eq 'ARRAY')
-    {
-        $c->log->error('Invalid request data');
-        $self->push_error($c, { message => 'Invalid request data' });
-        $c->detach();
-    }
-
-    foreach my $val (@$vals)
-    {
-        unless(exists($val->{id}))
+        my $data = $c->req->request_data;
+        my $vals;
+        
+        if(exists($data->{$self->data_root}) && defined($data->{$self->data_root}))
         {
-            $c->req->add_object([$c->req->current_result_set->new_result({}), $val]);
-            next;
+            my $root = $data->{$self->data_root};
+            if(reftype($root) eq 'ARRAY')
+            {
+                $vals = $root;
+            }
+            elsif(reftype($root) eq 'HASH')
+            {
+                $vals = [$root];
+            }
+            else
+            {
+                $c->log->error('Invalid request data');
+                $self->push_error($c, { message => 'Invalid request data' });
+                $c->detach();
+            }
+        }
+        else
+        {
+            # no data root, assume the request_data itself is the payload
+            $vals = [$c->req->request_data];
         }
 
-        try
+        foreach my $val (@$vals)
         {
-            $c->req->add_object([$self->object_lookup($c, $val->{id}), $val]);
-        }
-        catch
-        {
-            $c->log->error($_);
-            $self->push_error($c, { message => $_ });
-            $c->detach();
+            unless(exists($val->{id}))
+            {
+                $c->req->add_object([$c->req->current_result_set->new_result({}), $val]);
+                next;
+            }
+
+            try
+            {
+                $c->req->add_object([$self->object_lookup($c, $val->{id}), $val]);
+            }
+            catch
+            {
+                $c->log->error($_);
+                $self->push_error($c, { message => $_ });
+                $c->detach();
+            }
         }
     }
 }
@@ -326,6 +357,9 @@ sub list :Private
     $self->list_munge_parameters($c);
     $self->list_perform_search($c);
     $self->list_format_output($c);
+
+    # make sure there are no objects lingering
+    $c->req->clear_objects(); 
 }
 
 =method_protected list_munge_parameters
@@ -441,7 +475,7 @@ sub item :Private
     }
     else
     {
-        $c->stash->{response}->{$self->item_root} = $self->each_object_inflate($c, $c->req->get_object(0));
+        $c->stash->{response}->{$self->item_root} = $self->each_object_inflate($c, $c->req->get_object(0)->[0]);
     }
 }
 
@@ -1010,8 +1044,6 @@ For example if you wanted create to return the JSON for the newly created object
   ...
 
 It should be noted that the return_object attribute will produce the above result for you, free of charge.
-
-For REST the only difference besides the class names would be that create should be :Private rather than an endpoint.
 
 Similarly you might want create, update and delete to all forward to the list action once they are done so you can refresh your view. This should also be simple enough.
 

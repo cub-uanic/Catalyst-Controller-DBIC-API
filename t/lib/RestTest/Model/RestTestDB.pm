@@ -9,7 +9,7 @@ use Catalyst::Utils;
 __PACKAGE__->config(
 					schema_class => 'RestTest::Schema',
 					connect_info => [
-                        "DBI:SQLite:t/var/DBIxClass.db",
+                        "dbi:SQLite:t/var/DBIxClass.db",
                         "",
                         "",
 					   {AutoCommit => 1}

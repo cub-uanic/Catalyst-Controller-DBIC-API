@@ -5,7 +5,7 @@ use Moose;
 BEGIN { extends 'Catalyst::Controller::DBIC::API'; }
 
 __PACKAGE__->config(
-    'action'    => { object => { PathPart => 'id' } }, 
+    'action'    => { object_with_id => { PathPart => 'id' } }, 
     'default'   => 'application/json',
     'stash_key' => 'response',
     'map'       => {
@@ -52,7 +52,7 @@ sub index : Chained('setup') PathPart('') Args(0) {
 
 =method_protected create
 
-Chained: L</object_no_id>
+Chained: L</objects_no_id>
 PathPart: create
 CaptureArgs: 0
 
@@ -60,7 +60,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub create :Chained('object_no_id') :PathPart('create') :Args(0)
+sub create :Chained('objects_no_id') :PathPart('create')
 {
 	my ($self, $c) = @_;
     $c->forward('update_or_create');
@@ -76,10 +76,10 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub list :Chained('deserialize') :PathPart('list') :Args(0) {
+sub list :Chained('deserialize') :PathPart('list')
+{
 	my ($self, $c) = @_;
-
-        $self->next::method($c);
+    $self->next::method($c);
 }
 
 =method_protected item
@@ -92,10 +92,10 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub item :Chained('object_with_id') :PathPart('') :Args(0) {
+sub item :Chained('object_with_id') :PathPart('')
+{
     my ($self, $c) = @_;
-
-    $c->forward('view');
+    $self->next::method($c);
 }
 
 =method_protected update
@@ -108,9 +108,9 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update :Chained('object_with_id') :PathPart('update') :Args(0) {
+sub update :Chained('object_with_id') :PathPart('update')
+{
     my ($self, $c) = @_;
-
     $c->forward('update_or_create');
 }
 
@@ -124,7 +124,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete :Chained('object_with_id') :PathPart('delete') :Args(0)
+sub delete :Chained('object_with_id') :PathPart('delete')
 {
     my ($self, $c) = @_;
     $self->next::method($c);
@@ -132,7 +132,7 @@ sub delete :Chained('object_with_id') :PathPart('delete') :Args(0)
 
 =method_protected update_bulk
 
-Chained: L</object_no_id>
+Chained: L</objects_no_id>
 PathPart: update
 Args: 0
 
@@ -140,7 +140,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update_bulk :Chained('object_no_id') :PathPart('update') :Args(0)
+sub update_bulk :Chained('objects_no_id') :PathPart('update')
 {
     my ($self, $c) = @_;
     $c->forward('update_or_create');
@@ -148,7 +148,7 @@ sub update_bulk :Chained('object_no_id') :PathPart('update') :Args(0)
 
 =method_protected delete_bulk
 
-Chained: L</object_no_id>
+Chained: L</objects_no_id>
 PathPart: delete
 Args: 0
 
@@ -156,7 +156,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete_bulk :Chained('object_no_id') :PathPart('delete') :Args(0)
+sub delete_bulk :Chained('objects_no_id') :PathPart('delete')
 {
     my ($self, $c) = @_;
     $self->next::method($c);
