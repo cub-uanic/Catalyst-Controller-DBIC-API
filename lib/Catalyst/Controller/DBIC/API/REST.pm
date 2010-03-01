@@ -50,27 +50,19 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
 
-sub no_id : Chained('objects_no_id') PathPart('') ActionClass('REST') :Args(0) {}
-
-sub no_id_PUT
+sub update_or_create_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMethod') Method('POST') Method('PUT') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->update_or_create($c);
 }
 
-sub no_id_POST
-{
-	my ( $self, $c ) = @_;
-    $self->update_or_create($c);
-}
-
-sub no_id_DELETE
+sub delete_many_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMethod') Method('DELETE') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->delete($c);
 }
 
-sub no_id_GET
+sub list_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMethod') Method('GET') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->list($c);
@@ -90,27 +82,19 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/item>
 
 =cut
 
-sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') :Args(0) {}
-
-sub with_id_PUT
+sub update_or_create_one_object : Chained('object_with_id') PathPart('') Does('MatchRequestMethod') Method('POST') Method('PUT') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->update_or_create($c);
 }
 
-sub with_id_POST
-{
-	my ( $self, $c ) = @_;
-    $self->update_or_create($c);
-}
-
-sub with_id_DELETE
+sub delete_one_object : Chained('object_with_id') PathPart('') Does('MatchRequestMethod') Method('DELETE') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->delete($c);
 }
 
-sub with_id_GET
+sub list_one_object : Chained('object_with_id') PathPart('') Does('MatchRequestMethod') Method('GET') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->item($c);

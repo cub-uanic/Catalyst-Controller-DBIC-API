@@ -2,7 +2,7 @@ package Catalyst::Controller::DBIC::API;
 
 #ABSTRACT: Provides a DBIx::Class web service automagically
 use Moose;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 use CGI::Expand ();
 use DBIx::Class::ResultClass::HashRefInflator;
