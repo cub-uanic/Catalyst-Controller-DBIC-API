@@ -1,4 +1,4 @@
-package # hide from PAUSE 
+package # hide from PAUSE
     RestTest::Schema::Result::Producer;
 
 use base 'DBIx::Class::Core';

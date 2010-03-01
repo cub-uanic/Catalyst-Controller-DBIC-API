@@ -82,7 +82,7 @@ _build_joins finds the top parent in the structure and then recursively iterates
 sub _build_joins
 {
     my ($self) = @_;
-    
+
     my $parent;
     while(my $found = $self->parent)
     {

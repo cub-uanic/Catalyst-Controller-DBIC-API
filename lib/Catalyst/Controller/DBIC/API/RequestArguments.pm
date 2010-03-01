@@ -50,9 +50,9 @@ with 'MooseX::Role::BuildInstanceOf' =>
 parameter static => ( isa => Bool, default => 0 );
 
 role {
-    
+
     my $p = shift;
-    
+
     if($p->static)
     {
         requires qw/check_has_relation check_column_relation/;
@@ -146,7 +146,7 @@ prefetch is passed to ->search to optimize the number of database fetches for jo
     (
         is => 'ro',
         writer => '_set_prefetch',
-        isa => Prefetch, 
+        isa => Prefetch,
         default => sub { $p->static ? [] : undef },
         coerce => 1,
         trigger => sub
@@ -191,7 +191,7 @@ Like the synopsis in DBIC::API shows, you can declare a "template" of what is al
     (
         is => 'ro',
         writer => '_set_prefetch_allows',
-        isa => ArrayRef[ArrayRef|Str|HashRef], 
+        isa => ArrayRef[ArrayRef|Str|HashRef],
         default => sub { [ ] },
         predicate => 'has_prefetch_allows',
         trigger => sub
@@ -269,7 +269,7 @@ Please see L</generate_parameters_attributes> for details on how the format work
         trigger => sub
         {
             my ($self, $new) = @_;
-            
+
             if($self->has_search_exposes and @{$self->search_exposes})
             {
                 foreach my $foo (@$new)
@@ -292,7 +292,7 @@ Please see L</generate_parameters_attributes> for details on how the format work
                     }
                 }
             }
-            
+
             my ($search_parameters, $search_attributes) = $self->generate_parameters_attributes($new);
             $self->_set_search_parameters($search_parameters);
             $self->_set_search_attributes($search_attributes);
@@ -384,7 +384,7 @@ Please see L<DBIx::Class::ResultSet/select> for more details.
         default => sub { $p->static ? [] : undef },
         coerce => 1,
         trigger => sub
-        {   
+        {
             my ($self, $new) = @_;
             if($self->has_select_exposes)
             {
@@ -491,7 +491,7 @@ format_search_parameters iterates through the provided params ArrayRef, calling 
     method format_search_parameters => sub
     {
         my ($self, $params) = @_;
-        
+
         my $genparams = [];
 
         foreach my $param (@$params)
@@ -525,7 +525,7 @@ generate_column_parameters recursively generates properly aliased parameters for
                     next;
                 }
 
-                %$search_params = 
+                %$search_params =
                 %{
                     $self->generate_column_parameters
                     (
@@ -568,7 +568,7 @@ This builder method generates the search attributes
     {
         my ($self, $args) = @_;
         my $static = $self->_controller;
-        my $search_attributes = 
+        my $search_attributes =
         {
             group_by => $self->grouped_by || ((scalar(@{$static->grouped_by})) ? $static->grouped_by : undef),
             order_by => $self->ordered_by || ((scalar(@{$static->ordered_by})) ? $static->ordered_by : undef),
@@ -589,15 +589,15 @@ This builder method generates the search attributes
             $search_attributes->{page} = $search_attributes->{offset} / $search_attributes->{rows} + 1;
             delete $search_attributes->{offset};
         }
-        
 
-        $search_attributes = 
-        {   
+
+        $search_attributes =
+        {
             map { @$_ }
             grep
             {
-                defined($_->[1]) 
-                ? 
+                defined($_->[1])
+                ?
                     (ref($_->[1]) && reftype($_->[1]) eq 'HASH' && keys %{$_->[1]})
                     || (ref($_->[1]) && reftype($_->[1]) eq 'ARRAY' && @{$_->[1]})
                     || length($_->[1])
@@ -612,7 +612,7 @@ This builder method generates the search attributes
         if ($search_attributes->{page} && !$search_attributes->{rows}) {
             die 'list_page can only be used with list_count';
         }
-        
+
         if ($search_attributes->{select}) {
             # make sure all columns have an alias to avoid ambiguous issues
             # but allow non strings (eg. hashrefs for db procs like 'count')
@@ -621,7 +621,7 @@ This builder method generates the search attributes
         }
 
         return $search_attributes;
-        
+
     };
 
 };

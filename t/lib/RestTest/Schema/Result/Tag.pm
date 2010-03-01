@@ -1,4 +1,4 @@
-package # hide from PAUSE 
+package # hide from PAUSE
     RestTest::Schema::Result::Tag;
 
 use base qw/DBIx::Class::Core/;

@@ -5,7 +5,7 @@ use Moose;
 BEGIN { extends 'Catalyst::Controller::DBIC::API'; }
 
 __PACKAGE__->config(
-    'action'    => { object_with_id => { PathPart => 'id' } }, 
+    'action'    => { object_with_id => { PathPart => 'id' } },
     'default'   => 'application/json',
     'stash_key' => 'response',
     'map'       => {
@@ -16,7 +16,7 @@ __PACKAGE__->config(
 
 =head1 DESCRIPTION
 
-Provides an RPC API interface to the functionality described in L<Catalyst::Controller::DBIC::API>. 
+Provides an RPC API interface to the functionality described in L<Catalyst::Controller::DBIC::API>.
 
 By default provides the following endpoints:
 
@@ -37,7 +37,7 @@ CaptureArgs: 0
 As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the chain root of the controller but has no pathpart or chain parent defined by default, so these must be defined in order for the controller to function. The neatest way is normally to define these using the controller's config.
 
   __PACKAGE__->config
-    ( action => { setup => { PathPart => 'track', Chained => '/api/rpc/rpc_base' } }, 
+    ( action => { setup => { PathPart => 'track', Chained => '/api/rpc/rpc_base' } },
 	...
   );
 
@@ -60,7 +60,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub create :Chained('objects_no_id') :PathPart('create') :Args(0) 
+sub create :Chained('objects_no_id') :PathPart('create') :Args(0)
 {
 	my ($self, $c) = @_;
     $self->update_or_create($c);
@@ -76,7 +76,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub list :Chained('deserialize') :PathPart('list') :Args(0) 
+sub list :Chained('deserialize') :PathPart('list') :Args(0)
 {
 	my ($self, $c) = @_;
     $self->next::method($c);
@@ -92,7 +92,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub item :Chained('object_with_id') :PathPart('') :Args(0) 
+sub item :Chained('object_with_id') :PathPart('') :Args(0)
 {
     my ($self, $c) = @_;
     $self->next::method($c);
@@ -108,7 +108,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update :Chained('object_with_id') :PathPart('update') :Args(0) 
+sub update :Chained('object_with_id') :PathPart('update') :Args(0)
 {
     my ($self, $c) = @_;
     $self->update_or_create($c);
@@ -124,7 +124,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete :Chained('object_with_id') :PathPart('delete') :Args(0) 
+sub delete :Chained('object_with_id') :PathPart('delete') :Args(0)
 {
     my ($self, $c) = @_;
     $self->next::method($c);
@@ -140,7 +140,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update_bulk :Chained('objects_no_id') :PathPart('update') :Args(0) 
+sub update_bulk :Chained('objects_no_id') :PathPart('update') :Args(0)
 {
     my ($self, $c) = @_;
     $self->update_or_create($c);
@@ -156,7 +156,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete_bulk :Chained('objects_no_id') :PathPart('delete') :Args(0) 
+sub delete_bulk :Chained('objects_no_id') :PathPart('delete') :Args(0)
 {
     my ($self, $c) = @_;
     $self->next::method($c);

@@ -31,7 +31,7 @@ foreach my $var (qw/create_requires create_allows update_requires update_allows/
         traits => ['Array'],
         default => sub { [] },
         trigger => sub
-        {   
+        {
             my ($self, $new) = @_;
             $self->check_column_relation($_, 1) for @$new;
         },

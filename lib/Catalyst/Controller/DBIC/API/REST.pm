@@ -14,7 +14,7 @@ __PACKAGE__->config(
 
 =head1 DESCRIPTION
 
-Provides a REST style API interface to the functionality described in L<Catalyst::Controller::DBIC::API>. 
+Provides a REST style API interface to the functionality described in L<Catalyst::Controller::DBIC::API>.
 
 By default provides the following endpoints:
 
@@ -32,7 +32,7 @@ CaptureArgs: 0
 As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the chain root of the controller but has no pathpart or chain parent defined by default, so these must be defined in order for the controller to function. The neatest way is normally to define these using the controller's config.
 
   __PACKAGE__->config
-    ( action => { setup => { PathPart => 'track', Chained => '/api/rest/rest_base' } }, 
+    ( action => { setup => { PathPart => 'track', Chained => '/api/rest/rest_base' } },
 	...
   );
 

@@ -79,11 +79,11 @@ sub begin :Private
 This action is the chain root of the controller. It must either be overridden or configured to provide a base pathpart to the action and also a parent action. For example, for class MyAppDB::Track you might have
 
   package MyApp::Controller::API::RPC::Track;
-  use Moose; 
+  use Moose;
   BEGIN { extends 'Catalyst::Controller::DBIC::API::RPC'; }
 
   __PACKAGE__->config
-    ( action => { setup => { PathPart => 'track', Chained => '/api/rpc/rpc_base' } }, 
+    ( action => { setup => { PathPart => 'track', Chained => '/api/rpc/rpc_base' } },
 	...
   );
 
@@ -127,7 +127,7 @@ sub deserialize :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('De
     {
         $req_params = $c->req->data;
     }
-    else 
+    else
     {
         $req_params = CGI::Expand->expand_hash($c->req->params);
 
@@ -147,7 +147,7 @@ sub deserialize :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('De
                         $req_params->{$param}->{$key} = $deserialized;
                     }
                     catch
-                    { 
+                    {
                         $c->log->debug("Param '$param.$key' did not deserialize appropriately: $_")
                         if $c->debug;
                     }
@@ -161,14 +161,14 @@ sub deserialize :Chained('setup') :CaptureArgs(0) :PathPart('') :ActionClass('De
                     $req_params->{$param} = $deserialized;
                 }
                 catch
-                { 
+                {
                     $c->log->debug("Param '$param' did not deserialize appropriately: $_")
                     if $c->debug;
                 }
             }
         }
     }
-    
+
     $self->inflate_request($c, $req_params);
 }
 
@@ -185,7 +185,7 @@ sub generate_rs
 }
 
 =method_protected inflate_request
- 
+
 inflate_request is called at the end of deserialize to populate key portions of the request with the useful bits
 
 =cut
@@ -197,14 +197,14 @@ sub inflate_request
     try
     {
         # set static arguments
-        $c->req->_set_controller($self); 
+        $c->req->_set_controller($self);
 
         # set request arguments
         $c->req->_set_request_data($params);
 
         # set the current resultset
         $c->req->_set_current_result_set($self->generate_rs($c));
-        
+
     }
     catch
     {
@@ -257,12 +257,12 @@ This action is the chain root for object level actions (such as create, update, 
 sub objects_no_id :Chained('deserialize') :CaptureArgs(0) :PathPart('')
 {
     my ($self, $c) = @_;
-    
+
     if($c->req->has_request_data)
     {
         my $data = $c->req->request_data;
         my $vals;
-        
+
         if(exists($data->{$self->data_root}) && defined($data->{$self->data_root}))
         {
             my $root = $data->{$self->data_root};
@@ -354,7 +354,7 @@ Note that if pagination is needed, this can be achieved using a combination of t
   ?page=2&count=20
 
 Would result in this search:
- 
+
  $rs->search({}, { page => 2, rows => 20 })
 
 =cut
@@ -368,7 +368,7 @@ sub list
     $self->list_format_output($c);
 
     # make sure there are no objects lingering
-    $c->req->clear_objects(); 
+    $c->req->clear_objects();
 }
 
 =method_protected list_munge_parameters
@@ -388,14 +388,14 @@ list_perform_search executes the actual search. current_result_set is updated to
 sub list_perform_search
 {
     my ($self, $c) = @_;
-    
-    try 
+
+    try
     {
         my $req = $c->req;
-        
+
         my $rs = $req->current_result_set->search
         (
-            $req->search_parameters, 
+            $req->search_parameters,
             $req->search_attributes
         );
 
@@ -424,17 +424,17 @@ sub list_format_output
 
     my $rs = $c->req->current_result_set->search;
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-    
+
     try
     {
         my $output = {};
         my $formatted = [];
-        
+
         foreach my $row ($rs->all)
         {
             push(@$formatted, $self->row_format_output($c, $row));
         }
-        
+
         $output->{$self->data_root} = $formatted;
 
         if ($c->req->has_search_total_entries)
@@ -495,7 +495,7 @@ update_or_create is responsible for iterating any stored objects and performing 
 sub update_or_create
 {
     my ($self, $c) = @_;
-    
+
     if($c->req->has_objects)
     {
         $self->validate_objects($c);
@@ -518,7 +518,7 @@ transact_objects performs the actual commit to the database via $schema->txn_do.
 sub transact_objects
 {
     my ($self, $c, $coderef) = @_;
-    
+
     try
     {
         $self->stored_result_source->schema->txn_do
@@ -577,22 +577,22 @@ sub validate_object
     my %requires_map = map
     {
         $_ => 1
-    } 
+    }
     @{
-        ($object->in_storage) 
-        ? [] 
+        ($object->in_storage)
+        ? []
         : $c->stash->{create_requires} || $self->create_requires
     };
-    
+
     my %allows_map = map
     {
         (ref $_) ? %{$_} : ($_ => 1)
-    } 
+    }
     (
-        keys %requires_map, 
+        keys %requires_map,
         @{
-            ($object->in_storage) 
-            ? ($c->stash->{update_allows} || $self->update_allows) 
+            ($object->in_storage)
+            ? ($c->stash->{update_allows} || $self->update_allows)
             : ($c->stash->{create_allows} || $self->create_allows)
         }
     );
@@ -601,14 +601,14 @@ sub validate_object
     {
         # check value defined if key required
         my $allowed_fields = $allows_map{$key};
-        
+
         if (ref $allowed_fields)
         {
             my $related_source = $object->result_source->related_source($key);
             my $related_params = $params->{$key};
             my %allowed_related_map = map { $_ => 1 } @$allowed_fields;
             my $allowed_related_cols = ($allowed_related_map{'*'}) ? [$related_source->columns] : $allowed_fields;
-            
+
             foreach my $related_col (@{$allowed_related_cols})
             {
                 if (my $related_col_value = $related_params->{$related_col}) {
@@ -616,7 +616,7 @@ sub validate_object
                 }
             }
         }
-        else 
+        else
         {
             my $value = $params->{$key};
 
@@ -632,7 +632,7 @@ sub validate_object
                     }
                 }
             }
-            
+
             # check for multiple values
             if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false))
             {
@@ -646,12 +646,12 @@ sub validate_object
         }
     }
 
-    unless (keys %values || !$object->in_storage) 
+    unless (keys %values || !$object->in_storage)
     {
         die 'No valid keys passed';
     }
 
-    return \%values;  
+    return \%values;
 }
 
 =method_protected delete
@@ -663,7 +663,7 @@ delete operates on the stored objects in the request. It first transacts the obj
 sub delete
 {
     my ($self, $c) = @_;
-    
+
     if($c->req->has_objects)
     {
         $self->transact_objects($c, sub { $self->delete_objects($c, @_) });
@@ -709,7 +709,7 @@ sub save_object
     {
         $self->update_object_from_params($c, $object, $params);
     }
-    else 
+    else
     {
         $self->insert_object_from_params($c, $object, $params);
     }
@@ -734,7 +734,7 @@ sub update_object_from_params
             $self->update_object_relation($c, $object, delete $params->{$key}, $key);
         }
     }
-    
+
     $object->update($params);
 }
 
@@ -815,7 +815,7 @@ sub end :Private
         $c->stash->{response}->{success} = $self->use_json_boolean ? JSON::Any::true : 'true';
         $default_status = 200;
     }
-    
+
     unless ($default_status == 200)
     {
         delete $c->stash->{response}->{$self->data_root};
@@ -980,9 +980,9 @@ Columns and related columns that are okay to search on. For example if only the 
 You can also use this to allow custom columns should you wish to allow them through in order to be caught by a custom resultset. For example:
 
   package RestTest::Controller::API::RPC::TrackExposed;
-  
+
   ...
-  
+
   __PACKAGE__->config
     ( ...,
       search_exposes => [qw/position title custom_column/],
@@ -991,9 +991,9 @@ You can also use this to allow custom columns should you wish to allow them thro
 and then in your custom resultset:
 
   package RestTest::Schema::ResultSet::Track;
-  
+
   use base 'RestTest::Schema::ResultSet';
-  
+
   sub search {
     my $self = shift;
     my ($clause, $params) = @_;
@@ -1030,7 +1030,7 @@ For example if you wanted create to return the JSON for the newly created object
     # $c->req->all_objects will contain all of the created
     $self->next::method($c);
 
-    if ($c->req->has_objects) {    
+    if ($c->req->has_objects) {
       # $c->stash->{response} will be serialized in the end action
       $c->stash->{response}->{$self->data_root} = [ map { { $_->get_inflated_columns } } ($c->req->all_objects) ] ;
     }
@@ -1046,7 +1046,7 @@ It should be noted that the return_object attribute will produce the above resul
 
 Similarly you might want create, update and delete to all forward to the list action once they are done so you can refresh your view. This should also be simple enough.
 
-If more extensive customization is required, it is recommened to peer into the roles that comprise the system and make use 
+If more extensive customization is required, it is recommened to peer into the roles that comprise the system and make use
 
 =head1 NOTES
 

@@ -44,7 +44,7 @@ has 'stored_model' =>
 );
 
 sub _build_stored_model
-{   
+{
     return $_[0]->_application->model($_[0]->class);
 }
 
@@ -75,7 +75,7 @@ check_has_relation meticulously delves into the result sources relationships to 
 sub check_has_relation
 {
     my ($self, $rel, $other, $nest, $static) = @_;
-    
+
     $nest ||= $self->stored_result_source;
 
     if(HashRef->check($other))
@@ -99,14 +99,14 @@ sub check_has_relation
 
 =method_public check_column_relation
 
-Convenience method to first check if the provided argument is a valid relation (if it is a HashRef) or column. 
+Convenience method to first check if the provided argument is a valid relation (if it is a HashRef) or column.
 
 =cut
 
 sub check_column_relation
 {
     my ($self, $col_rel, $static) = @_;
-    
+
     if(HashRef->check($col_rel))
     {
         try

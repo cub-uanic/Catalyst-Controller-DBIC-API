@@ -85,7 +85,7 @@ around visit_hash => sub
 around visit_value => sub
 {
     my ($orig, $self, $val) = @_;
-    
+
     if($self->value_type eq 'NONE')
     {
         $self->dive();
@@ -98,7 +98,7 @@ around visit_value => sub
     {
         $self->append_text($val);
         warn 'VALUE: ' . $self->current_template if DEBUG;
-    }    
+    }
     else
     {
         $self->$orig($val);

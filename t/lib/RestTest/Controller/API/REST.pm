@@ -11,7 +11,7 @@ sub rest_base : Chained('/api/api_base') PathPart('rest') CaptureArgs(0) {
 
 sub end :Private {
 	my ( $self, $c ) = @_;
-	
+
 }
 
 1;

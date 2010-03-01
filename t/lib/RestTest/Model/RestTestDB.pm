@@ -13,7 +13,7 @@ __PACKAGE__->config(
                         "",
                         "",
 					   {AutoCommit => 1}
-                      ]					  
+                      ]
 );
 
 1;

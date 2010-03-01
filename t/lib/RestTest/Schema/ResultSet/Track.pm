@@ -1,4 +1,4 @@
-package # hide from PAUSE 
+package # hide from PAUSE
     RestTest::Schema::ResultSet::Track;
 
 use base 'RestTest::Schema::ResultSet';
@@ -13,7 +13,7 @@ sub search {
       $clause->[0]->{'cd.year'} = $pretend;
     }
   }
-  my $rs = $self->SUPER::search(@_);	
+  my $rs = $self->SUPER::search(@_);
 }
 
 1;

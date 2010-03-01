@@ -25,7 +25,7 @@ has objects =>
     isa => ArrayRef[ Tuple[ Object, Maybe[HashRef] ] ],
     traits => [ 'Array' ],
     default => sub { [] },
-    handles => 
+    handles =>
     {
         all_objects => 'elements',
         add_object => 'push',
