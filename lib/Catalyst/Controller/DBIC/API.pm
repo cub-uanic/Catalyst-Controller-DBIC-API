@@ -72,7 +72,6 @@ sub begin :Private
         unless Moose::Util::does_role($c->req, 'Catalyst::Controller::DBIC::API::Request');
 }
 
-
 =method_protected setup
 
  :Chained('specify.in.subclass.config') :CaptureArgs(0) :PathPart('specify.in.subclass.config')
@@ -184,7 +183,6 @@ sub generate_rs
     my ($self, $c) = @_;
     return $self->stored_result_source->resultset;
 }
-
 
 =method_protected inflate_request
  
@@ -329,9 +327,7 @@ sub object_lookup
 
 =method_protected list
 
- :Private
-
-List level action chained from L</setup>. List's steps are broken up into three distinct methods: L</list_munge_parameters>, L</list_perform_search>, and L</list_format_output>.
+list's steps are broken up into three distinct methods: L</list_munge_parameters>, L</list_perform_search>, and L</list_format_output>.
 
 The goal of this method is to call ->search() on the current_result_set, HashRefInflator the result, and return it in $c->stash->{response}->{$self->data_root}. Please see the individual methods for more details on what actual processing takes place.
 
@@ -363,7 +359,7 @@ Would result in this search:
 
 =cut
 
-sub list :Private 
+sub list
 {
     my ($self, $c) = @_;
 
@@ -469,14 +465,12 @@ sub row_format_output
 }
 
 =method_protected item
- 
- :Private
 
 item will return a single object called by identifier in the uri. It will be inflated via each_object_inflate.
 
 =cut
 
-sub item :Private 
+sub item
 {
     my ($self, $c) = @_;
 
@@ -492,16 +486,13 @@ sub item :Private
     }
 }
 
-
 =method_protected update_or_create
-
- :Private
 
 update_or_create is responsible for iterating any stored objects and performing updates or creates. Each object is first validated to ensure it meets the criteria specified in the L</create_requires> and L</create_allows> (or L</update_allows>) parameters of the controller config. The objects are then committed within a transaction via L</transact_objects> using a closure around L</save_objects>.
 
 =cut
 
-sub update_or_create :Private
+sub update_or_create
 {
     my ($self, $c) = @_;
     
@@ -665,13 +656,11 @@ sub validate_object
 
 =method_protected delete
 
- :Private
-
 delete operates on the stored objects in the request. It first transacts the objects, deleting them in the database using L</transact_objects> and a closure around L</delete_objects>, and then clears the request store of objects.
 
 =cut
 
-sub delete :Private
+sub delete
 {
     my ($self, $c) = @_;
     
@@ -803,13 +792,11 @@ sub delete_object
 
 =method_protected end
 
- :Private
-
 end performs the final manipulation of the response before it is serialized. This includes setting the success of the request both at the HTTP layer and JSON layer. If configured with return_object true, and there are stored objects as the result of create or update, those will be inflated according to the schema and get_inflated_columns
 
 =cut
 
-sub end :Private 
+sub end :Private
 {
     my ($self, $c) = @_;
 
@@ -1048,7 +1035,6 @@ For example if you wanted create to return the JSON for the newly created object
       $c->stash->{response}->{$self->data_root} = [ map { { $_->get_inflated_columns } } ($c->req->all_objects) ] ;
     }
   }
-
 
   package MyApp::Controller::API::RPC::Track;
   ...

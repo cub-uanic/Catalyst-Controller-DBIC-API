@@ -42,7 +42,7 @@ Chained: L</objects_no_id>
 PathPart: none
 CaptureArgs: 0
 
-Forwards to list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
+Calls list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
 
 DELETE: L<Catalyst::Controller::DBIC::API/delete>
 POST/PUT: L<Catalyst::Controller::DBIC::API/update_or_create>
@@ -50,30 +50,30 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/list>
 
 =cut
 
-sub no_id : Chained('objects_no_id') PathPart('') ActionClass('REST') {}
+sub no_id : Chained('objects_no_id') PathPart('') ActionClass('REST') :Args(0) {}
 
 sub no_id_PUT
 {
 	my ( $self, $c ) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 sub no_id_POST
 {
 	my ( $self, $c ) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 sub no_id_DELETE
 {
 	my ( $self, $c ) = @_;
-    $c->forward('delete');
+    $self->delete($c);
 }
 
 sub no_id_GET
 {
 	my ( $self, $c ) = @_;
-	$c->forward('list');
+    $self->list($c);
 }
 
 =method_protected with_id
@@ -90,30 +90,30 @@ GET: forwards to L<Catalyst::Controller::DBIC::API/item>
 
 =cut
 
-sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') {}
+sub with_id :Chained('object_with_id') :PathPart('') :ActionClass('REST') :Args(0) {}
 
 sub with_id_PUT
 {
 	my ( $self, $c ) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 sub with_id_POST
 {
 	my ( $self, $c ) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 sub with_id_DELETE
 {
 	my ( $self, $c ) = @_;
-    $c->forward('delete');
+    $self->delete($c);
 }
 
 sub with_id_GET
 {
 	my ( $self, $c ) = @_;
-	$c->forward('item');
+    $self->item($c);
 }
 
 1;

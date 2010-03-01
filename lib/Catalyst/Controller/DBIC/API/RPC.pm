@@ -60,10 +60,10 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub create :Chained('objects_no_id') :PathPart('create')
+sub create :Chained('objects_no_id') :PathPart('create') :Args(0) 
 {
 	my ($self, $c) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 =method_protected list
@@ -76,7 +76,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub list :Chained('deserialize') :PathPart('list')
+sub list :Chained('deserialize') :PathPart('list') :Args(0) 
 {
 	my ($self, $c) = @_;
     $self->next::method($c);
@@ -92,7 +92,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub item :Chained('object_with_id') :PathPart('')
+sub item :Chained('object_with_id') :PathPart('') :Args(0) 
 {
     my ($self, $c) = @_;
     $self->next::method($c);
@@ -108,10 +108,10 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update :Chained('object_with_id') :PathPart('update')
+sub update :Chained('object_with_id') :PathPart('update') :Args(0) 
 {
     my ($self, $c) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 =method_protected delete
@@ -124,7 +124,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete :Chained('object_with_id') :PathPart('delete')
+sub delete :Chained('object_with_id') :PathPart('delete') :Args(0) 
 {
     my ($self, $c) = @_;
     $self->next::method($c);
@@ -140,10 +140,10 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub update_bulk :Chained('objects_no_id') :PathPart('update')
+sub update_bulk :Chained('objects_no_id') :PathPart('update') :Args(0) 
 {
     my ($self, $c) = @_;
-    $c->forward('update_or_create');
+    $self->update_or_create($c);
 }
 
 =method_protected delete_bulk
@@ -156,7 +156,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 
 =cut
 
-sub delete_bulk :Chained('objects_no_id') :PathPart('delete')
+sub delete_bulk :Chained('objects_no_id') :PathPart('delete') :Args(0) 
 {
     my ($self, $c) = @_;
     $self->next::method($c);
