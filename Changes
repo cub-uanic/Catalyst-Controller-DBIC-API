@@ -6,6 +6,12 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Fixed some typos and code cleanups
 - Added possibility to fetch a single object by id + tests using 'item'
 - Added item_root attribute which defaults to 'data' and is used as data root for 'item'
+- Break out bulk actions into their own methods for RPC
+- Restore identifer vs. no identifer for REST chains
+- Chain dispatching has now been fixed to not be as hackish as before
+- Shift around where the current result set is set. setup() now does /nothing/ by default other than be a chain anchor
+- Tests added for updating related keys via REST
+- PLEASE THOROUGHLY TEST AS SOME BEHAVIOR MAY HAVE BEEN ALTERED SUBTLY WHEN DEALING WITH BULK vs SINGLE ACTIONS
 
 2.001003  2010-02-12 19:01:56 America/Chicago
 
