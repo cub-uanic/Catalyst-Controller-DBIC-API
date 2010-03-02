@@ -748,7 +748,13 @@ sub update_object_relation
 {
     my ($self, $c, $object, $related_params, $relation) = @_;
     my $row = $object->find_related($relation, {} , {});
-    $row->update($related_params);
+
+    if ($row) {
+        $row->update($related_params);
+    }
+    else {
+        $object->create_related($relation, $related_params);
+    }
 }
 
 =method_protected insert_object_from_params
