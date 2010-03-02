@@ -1,9 +1,9 @@
 package # hide from PAUSE
     RestTest::Schema::Result::Track;
 
-use base 'DBIx::Class';
+use base 'DBIx::Class::Core';
 
-__PACKAGE__->load_components(qw/ TimeStamp Core /);
+__PACKAGE__->load_components(qw/ InflateColumn::DateTime /);
 __PACKAGE__->table('track');
 __PACKAGE__->add_columns(
   'trackid' => {
