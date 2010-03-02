@@ -556,7 +556,7 @@ sub validate_objects
     {
         my $err = $_;
         $c->log->error($err);
-        $err =~ s/\s+at\s+\/.+\n$//g;
+        $err =~ s/\s+at\s+.+\n$//g;
         $self->push_error($c, { message => $err });
         $c->detach();
     }
