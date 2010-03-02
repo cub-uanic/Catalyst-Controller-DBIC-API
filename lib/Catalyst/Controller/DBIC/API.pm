@@ -766,8 +766,22 @@ insert_object_from_params sets the columns for the object, then calls ->insert
 sub insert_object_from_params
 {
     my ($self, $c, $object, $params) = @_;
-    $object->set_columns($params);
+
+    my %rels;
+    while (my ($k, $v) = each %{ $params }) {
+        if (ref $v && !($v == JSON::Any::true || $v == JSON::Any::false)) {
+            $rels{$k} = $v;
+        }
+        else {
+            $object->set_column($k => $v);
+        }
+    }
+
     $object->insert;
+
+    while (my ($k, $v) = each %rels) {
+        $object->create_related($k, $v);
+    }
 }
 
 =method_protected delete_objects
