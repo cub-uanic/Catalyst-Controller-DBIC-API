@@ -611,7 +611,7 @@ sub validate_object
 
             foreach my $related_col (@{$allowed_related_cols})
             {
-                if (my $related_col_value = $related_params->{$related_col}) {
+                if (defined(my $related_col_value = $related_params->{$related_col})) {
                     $values{$key}{$related_col} = $related_col_value;
                 }
             }
