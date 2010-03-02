@@ -40,4 +40,19 @@ my $artist_view_url = "$base/api/rest/artist/";
     like($response->{messages}->[0], qr/^No object found for id/, 'error message for not existing object fetch ok');
 }
 
+my $track_view_url = "$base/api/rest/track/";
+
+{
+    my $id = 9;
+    my $req = GET( $track_view_url . $id, undef, 'Accept' => 'application/json' );
+    $mech->request($req);
+    cmp_ok( $mech->status, '==', 200, 'got track with datetime object okay' );
+    my %expected_response = $schema->resultset('Track')->find($id)->get_columns;
+    warn $mech->content, "\n";
+    my $response = JSON::Any->Load( $mech->content);
+    use Data::Dumper;
+    warn Dumper($response);
+    is_deeply( $response, { data => \%expected_response, success => 'true' }, 'correct data returned for track with datetime' );
+}
+
 done_testing();

@@ -1,7 +1,9 @@
 package # hide from PAUSE
     RestTest::Schema::Result::Track;
 
-use base 'DBIx::Class::Core';
+use base 'DBIx::Class';
+
+__PACKAGE__->load_components(qw/ TimeStamp Core /);
 __PACKAGE__->table('track');
 __PACKAGE__->add_columns(
   'trackid' => {
