@@ -374,6 +374,7 @@ sub list
 =method_protected list_munge_parameters
 
 list_munge_parameters is a noop by default. All arguments will be passed through without any manipulation. In order to successfully manipulate the parameters before the search is performed, simply access $c->req->search_parameters|search_attributes (ArrayRef and HashRef respectively), which correspond directly to ->search($parameters, $attributes). Parameter keys will be in already-aliased form.
+To store the munged parameters call $c->req->_set_search_parameters($newparams) and $c->req->_set_search_attributes($newattrs).
 
 =cut
 
