@@ -48,10 +48,7 @@ my $track_view_url = "$base/api/rest/track/";
     $mech->request($req);
     cmp_ok( $mech->status, '==', 200, 'got track with datetime object okay' );
     my %expected_response = $schema->resultset('Track')->find($id)->get_columns;
-    warn $mech->content, "\n";
     my $response = JSON::Any->Load( $mech->content);
-    use Data::Dumper;
-    warn Dumper($response);
     is_deeply( $response, { data => \%expected_response, success => 'true' }, 'correct data returned for track with datetime' );
 }
 
