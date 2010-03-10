@@ -864,7 +864,7 @@ sub each_object_inflate
 {
     my ($self, $c, $object) = @_;
 
-    return { $object->get_inflated_columns };
+    return { $object->get_columns };
 }
 
 # from Catalyst::Action::Serialize
