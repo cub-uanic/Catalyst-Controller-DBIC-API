@@ -2,6 +2,8 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
 
+2.002001  2010-04-01 01:41:11 Europe/Berlin
+
 - Remove debugging code and other noise from tests
 - Fixed some typos and code cleanups
 - Added possibility to fetch a single object by id + tests using 'item'
