@@ -31,6 +31,15 @@ __PACKAGE__->config( name => 'RestTest' );
 # Start the application
 __PACKAGE__->setup;
 
+my $logger = Class::MOP::Class->create(
+    'MyLog',
+    methods => {
+        (map { ($_ => sub { () }), ("is_${_}" => sub { () }) } qw(debug info warn error fatal)),
+        (map { ($_ => sub { () }) } qw(level levels enable disable abort)),
+    },
+);
+
+__PACKAGE__->log($logger->new_object);
 
 =head1 NAME
 
