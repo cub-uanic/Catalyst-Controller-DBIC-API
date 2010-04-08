@@ -635,7 +635,7 @@ sub validate_object
             }
 
             # check for multiple values
-            if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false))
+            if (ref($value) && !(reftype($value) eq reftype(JSON::Any::true)))
             {
                 require Data::Dumper;
                 die "Multiple values for '${key}': ${\Data::Dumper::Dumper($value)}";
@@ -719,7 +719,7 @@ sub save_object
 
 =method_protected update_object_from_params
 
-update_object_from_params iterates through the params to see if any of them are pertinent to relations. If so it calls L</update_object_relation> with the object, and the relation parameters. Then it calls ->upbdate on the object.
+update_object_from_params iterates through the params to see if any of them are pertinent to relations. If so it calls L</update_object_relation> with the object, and the relation parameters. Then it calls ->update on the object.
 
 =cut
 
@@ -730,7 +730,7 @@ sub update_object_from_params
     foreach my $key (keys %$params)
     {
         my $value = $params->{$key};
-        if (ref($value) && !($value == JSON::Any::true || $value == JSON::Any::false))
+        if (ref($value) && !(reftype($value) eq reftype(JSON::Any::true)))
         {
             $self->update_object_relation($c, $object, delete $params->{$key}, $key);
         }
@@ -770,7 +770,7 @@ sub insert_object_from_params
 
     my %rels;
     while (my ($k, $v) = each %{ $params }) {
-        if (ref $v && !($v == JSON::Any::true || $v == JSON::Any::false)) {
+        if (ref($v) && !(reftype($v) eq reftype(JSON::Any::true))) {
             $rels{$k} = $v;
         }
         else {
