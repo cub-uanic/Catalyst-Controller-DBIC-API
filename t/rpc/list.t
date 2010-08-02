@@ -140,7 +140,7 @@ my $cd_list_url = "$base/api/rpc/cd/list";
 	cmp_ok( $mech->status, '==', 400, 'non numeric list_page request not okay' );
 	my $response = JSON::Any->Load( $mech->content);
 	is($response->{success}, 'false', 'correct data returned');
-    like($response->{messages}->[0], qr/Attribute \(page\) does not pass the type constraint because: Validation failed for 'Int' failed with value fgdg/, 'correct data returned');
+    like($response->{messages}->[0], qr/Attribute \(page\) does not pass the type constraint because: Validation failed for 'Int' (failed )?with value fgdg/, 'correct data returned');
 }
 
 {
@@ -151,7 +151,7 @@ my $cd_list_url = "$base/api/rpc/cd/list";
 	cmp_ok( $mech->status, '==', 400, 'non numeric list_count request not okay' );
 	my $response = JSON::Any->Load( $mech->content);
 	is($response->{success}, 'false', 'correct data returned');
-    like($response->{messages}->[0], qr/Attribute \(count\) does not pass the type constraint because: Validation failed for 'Int' failed with value sdsdf/, 'correct data returned');
+    like($response->{messages}->[0], qr/Attribute \(count\) does not pass the type constraint because: Validation failed for 'Int' (failed )?with value sdsdf/, 'correct data returned');
     
 }
 

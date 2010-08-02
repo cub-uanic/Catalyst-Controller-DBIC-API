@@ -5,6 +5,7 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Fixed search for related columns overwriting existing params in generate_column_parameters
 - Use column accessor for updating an existing object instead of passing the new values to update.
   This enables the column accessors to do additional work (for example with method modifiers).
+- Fixed t/rpc/list.t error message regex to pass with Moose version >=1.05
 
 2.002001  2010-04-01 01:41:11 Europe/Berlin
 
