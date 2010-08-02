@@ -734,9 +734,10 @@ sub update_object_from_params
         {
             $self->update_object_relation($c, $object, delete $params->{$key}, $key);
         }
+        $object->$key($value);
     }
 
-    $object->update($params);
+    $object->update();
 }
 
 =method_protected update_object_relation
@@ -751,7 +752,11 @@ sub update_object_relation
     my $row = $object->find_related($relation, {} , {});
 
     if ($row) {
-        $row->update($related_params);
+        foreach my $key (keys %$related_params) {
+            my $value = $related_params->{$key};
+            $row->$key($value);
+        }
+        $row->update();
     }
     else {
         $object->create_related($relation, $related_params);
