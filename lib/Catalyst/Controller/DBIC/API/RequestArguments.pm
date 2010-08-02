@@ -512,7 +512,7 @@ generate_column_parameters recursively generates properly aliased parameters for
     {
         my ($self, $source, $param, $join, $base) = @_;
         $base ||= 'me';
-        my $search_params;
+        my $search_params = {};
 
         # build up condition
         foreach my $column (keys %$param)
@@ -525,8 +525,7 @@ generate_column_parameters recursively generates properly aliased parameters for
                     next;
                 }
 
-                %$search_params =
-                %{
+                $search_params = { %$search_params, %{
                     $self->generate_column_parameters
                     (
                         $source->related_source($column),
@@ -534,7 +533,7 @@ generate_column_parameters recursively generates properly aliased parameters for
                         Catalyst::Controller::DBIC::API::JoinBuilder->new(parent => $join, name => $column),
                         $column
                     )
-                };
+                }};
             }
             else
             {

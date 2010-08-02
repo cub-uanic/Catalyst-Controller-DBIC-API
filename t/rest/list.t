@@ -21,6 +21,7 @@ ok(my $schema = DBICTest->init_schema(), 'got schema');
 my $artist_list_url = "$base/api/rest/artist";
 my $filtered_artist_list_url = "$base/api/rest/bound_artist";
 my $producer_list_url = "$base/api/rest/producer";
+my $cd_list_url = "$base/api/rest/cd";
 
 # test open request
 {
@@ -102,6 +103,22 @@ my $producer_list_url = "$base/api/rest/producer";
   my $response = JSON::Any->Load( $mech->content);
   my @expected_response = map { { $_->get_columns } } $schema->resultset('Artist')->search({ 'artistid' => '1' })->all;
   is_deeply( $response, { list => \@expected_response, success => 'true' }, 'correct data returned for class with setup_list_method specified' );
+}
+
+{
+  my $uri = URI->new( $cd_list_url );
+  $uri->query_form({ 'search.tracks.position' => '1', 'search.artist.name' => 'Caterwauler McCrae' });
+  my $req = GET( $uri, 'Accept' => 'text/x-json' );
+  $mech->request($req);
+  cmp_ok( $mech->status, '==', 200, 'search multiple params request okay' );
+  my $response = JSON::Any->Load( $mech->content);
+  my @expected_response = map { { $_->get_columns } } $schema->resultset('CD')->search({
+          'artist.name'     => 'Caterwauler McCrae',
+          'tracks.position' => 1,
+      }, {
+          join => [qw/ artist tracks /],
+      })->all;
+  is_deeply( $response, { list => \@expected_response, success => 'true' }, 'correct data returned for multiple search params' );
 }
 
 done_testing();
