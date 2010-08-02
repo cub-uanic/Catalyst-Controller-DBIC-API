@@ -734,7 +734,15 @@ sub update_object_from_params
         {
             $self->update_object_relation($c, $object, delete $params->{$key}, $key);
         }
-        $object->$key($value);
+        # accessor = colname
+        elsif ($object->can($key)) {
+            $object->$key($value);
+        }
+        # accessor != colname
+        else {
+            my $accessor = $object->result_source->column_info($key)->{accessor};
+            $object->$accessor($value);
+        }
     }
 
     $object->update();
@@ -754,7 +762,19 @@ sub update_object_relation
     if ($row) {
         foreach my $key (keys %$related_params) {
             my $value = $related_params->{$key};
-            $row->$key($value);
+            if (ref($value) && !(reftype($value) eq reftype(JSON::Any::true)))
+            {
+                $self->update_object_relation($c, $row, delete $related_params->{$key}, $key);
+            }
+            # accessor = colname
+            elsif ($object->can($key)) {
+                $object->$key($value);
+            }
+            # accessor != colname
+            else {
+                my $accessor = $object->result_source->column_info($key)->{accessor};
+                $object->$accessor($value);
+            }
         }
         $row->update();
     }
