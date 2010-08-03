@@ -2,6 +2,8 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 {{ $NEXT }}
 
+2.002002  2010-08-03 14:40:50 Europe/Vienna
+
 - Fixed search for related columns overwriting existing params in generate_column_parameters
 - Use column accessor for updating an existing object instead of passing the new values to update.
   This enables the column accessors to do additional work (for example with method modifiers).
