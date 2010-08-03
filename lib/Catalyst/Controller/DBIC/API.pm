@@ -767,13 +767,13 @@ sub update_object_relation
                 $self->update_object_relation($c, $row, delete $related_params->{$key}, $key);
             }
             # accessor = colname
-            elsif ($object->can($key)) {
-                $object->$key($value);
+            elsif ($row->can($key)) {
+                $row->$key($value);
             }
             # accessor != colname
             else {
-                my $accessor = $object->result_source->column_info($key)->{accessor};
-                $object->$accessor($value);
+                my $accessor = $row->result_source->column_info($key)->{accessor};
+                $row->$accessor($value);
             }
         }
         $row->update();
