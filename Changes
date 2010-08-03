@@ -6,6 +6,7 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Use column accessor for updating an existing object instead of passing the new values to update.
   This enables the column accessors to do additional work (for example with method modifiers).
 - Fixed t/rpc/list.t error message regex to pass with Moose version >=1.05
+- Fixed pod coverage and added a test for it
 
 2.002001  2010-04-01 01:41:11 Europe/Berlin
 

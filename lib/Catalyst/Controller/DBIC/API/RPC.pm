@@ -43,6 +43,16 @@ As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the cha
 
 =cut
 
+=method_protected index
+
+Chained: L</setup>
+PathPart: ''
+Args: 0
+
+Returns http status code 404 by default.
+
+=cut
+
 sub index : Chained('setup') PathPart('') Args(0) {
 	my ( $self, $c ) = @_;
 

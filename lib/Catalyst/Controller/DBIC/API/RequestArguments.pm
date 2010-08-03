@@ -10,6 +10,7 @@ use namespace::autoclean;
 
 use Catalyst::Controller::DBIC::API::JoinBuilder;
 
+=for Pod::Coverage check_rel
 
 =attribute_private search_validator
 

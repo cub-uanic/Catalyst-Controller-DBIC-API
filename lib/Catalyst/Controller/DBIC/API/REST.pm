@@ -36,17 +36,14 @@ As described in L<Catalyst::Controller::DBIC::API/setup>, this action is the cha
 	...
   );
 
-=method_protected no_id
+=method_protected update_or_create_objects
 
 Chained: L</objects_no_id>
 PathPart: none
-CaptureArgs: 0
+Args: 0
+Method: POST/PUT
 
-Calls list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
-
-DELETE: L<Catalyst::Controller::DBIC::API/delete>
-POST/PUT: L<Catalyst::Controller::DBIC::API/update_or_create>
-GET: forwards to L<Catalyst::Controller::DBIC::API/list>
+Calls L<Catalyst::Controller::DBIC::API/update_or_create>. 
 
 =cut
 
@@ -56,11 +53,33 @@ sub update_or_create_objects : Chained('objects_no_id') PathPart('') Does('Match
     $self->update_or_create($c);
 }
 
+=method_protected delete_many_objects
+
+Chained: L</objects_no_id>
+PathPart: none
+Args: 0
+Method: DELETE
+
+Calls L<Catalyst::Controller::DBIC::API/delete>. 
+
+=cut
+
 sub delete_many_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMethod') Method('DELETE') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->delete($c);
 }
+
+=method_protected list_objects
+
+Chained: L</objects_no_id>
+PathPart: none
+Args: 0
+Method: GET
+
+Calls L<Catalyst::Controller::DBIC::API/list>. 
+
+=cut
 
 sub list_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMethod') Method('GET') Args(0)
 {
@@ -68,17 +87,14 @@ sub list_objects : Chained('objects_no_id') PathPart('') Does('MatchRequestMetho
     $self->list($c);
 }
 
-=method_protected with_id
+=method_protected update_or_create_one_object
 
 Chained: L</object_with_id>
 PathPart: none
-CaptureArgs: 0
+Args: 0
+Method: POST/PUT
 
-Forwards to list level methods described in L<Catalyst::Controller::DBIC::API> as follows:
-
-DELETE: L<Catalyst::Controller::DBIC::API/delete>
-POST/PUT: L<Catalyst::Controller::DBIC::API/update_or_create>
-GET: forwards to L<Catalyst::Controller::DBIC::API/item>
+Calls L<Catalyst::Controller::DBIC::API/update_or_create>.
 
 =cut
 
@@ -88,11 +104,33 @@ sub update_or_create_one_object : Chained('object_with_id') PathPart('') Does('M
     $self->update_or_create($c);
 }
 
+=method_protected delete_one_object
+
+Chained: L</object_with_id>
+PathPart: none
+Args: 0
+Method: DELETE
+
+Calls L<Catalyst::Controller::DBIC::API/delete>.
+
+=cut
+
 sub delete_one_object : Chained('object_with_id') PathPart('') Does('MatchRequestMethod') Method('DELETE') Args(0)
 {
 	my ( $self, $c ) = @_;
     $self->delete($c);
 }
+
+=method_protected list_one_object
+
+Chained: L</object_with_id>
+PathPart: none
+Args: 0
+Method: GET
+
+Calls L<Catalyst::Controller::DBIC::API/item>.
+
+=cut
 
 sub list_one_object : Chained('object_with_id') PathPart('') Does('MatchRequestMethod') Method('GET') Args(0)
 {

@@ -892,6 +892,12 @@ sub each_object_inflate
     return { $object->get_columns };
 }
 
+=method_protected serialize
+
+multiple actions forward to serialize which uses Catalyst::Action::Serialize.
+
+=cut
+
 # from Catalyst::Action::Serialize
 sub serialize :ActionClass('Serialize') { }
 
