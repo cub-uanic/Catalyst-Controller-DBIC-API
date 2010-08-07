@@ -21,6 +21,7 @@ my $track = $schema->resultset('Track')->first;
 my %original_cols = $track->get_columns;
 
 my $track_delete_url = "$base/api/rpc/track/id/" . $track->id . "/delete";
+my $tracks_delete_url = "$base/api/rpc/track/delete";
 
 {
   my $req = POST( $track_delete_url, {
@@ -39,6 +40,19 @@ my $track_delete_url = "$base/api/rpc/track/id/" . $track->id . "/delete";
   });
   $mech->request($req, $content_type);
   cmp_ok( $mech->status, '==', 400, 'Attempt to delete again caught' );
+}
+
+{
+  my $track_cnt = $schema->resultset('Track')->count;
+  my $tracks_rs = $schema->resultset('Track')->search(undef, { select => ['trackid'], as => ['id'], rows=> 3 });
+  $tracks_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  my $test_data = JSON::Any->Dump({ list => [$tracks_rs->all] });
+  my $req = POST( $tracks_delete_url, Content => $test_data );
+  $req->content_type('text/x-json');
+  $mech->request($req);
+  cmp_ok( $mech->status, '==', 200, 'Attempt to delete three tracks ok' );
+
+  is($schema->resultset('Track')->count + 3, $track_cnt, 'Three tracks deleted');
 }
 
 done_testing();

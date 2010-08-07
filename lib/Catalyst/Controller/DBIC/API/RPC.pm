@@ -169,7 +169,7 @@ Provides an endpoint to the functionality described in L<Catalyst::Controller::D
 sub delete_bulk :Chained('objects_no_id') :PathPart('delete') :Args(0)
 {
     my ($self, $c) = @_;
-    $self->next::method($c);
+    $self->delete($c);
 }
 
 1;
