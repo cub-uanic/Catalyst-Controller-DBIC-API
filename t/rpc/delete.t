@@ -44,7 +44,7 @@ my $tracks_delete_url = "$base/api/rpc/track/delete";
 
 {
   my $track_cnt = $schema->resultset('Track')->count;
-  my $tracks_rs = $schema->resultset('Track')->search(undef, { select => ['trackid'], as => ['id'], rows=> 3 });
+  my $tracks_rs = $schema->resultset('Track')->search(undef, { select => ['trackid'], as => ['id'], rows => 3 });
   $tracks_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   my $test_data = JSON::Any->Dump({ list => [$tracks_rs->all] });
   my $req = POST( $tracks_delete_url, Content => $test_data );

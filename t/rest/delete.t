@@ -43,7 +43,7 @@ my $track_delete_url = $track_url . $track->id;
 
 {
   my $track_cnt = $schema->resultset('Track')->count;
-  my $tracks_rs = $schema->resultset('Track')->search(undef, { select => ['trackid'], as => ['id'], rows=> 3 });
+  my $tracks_rs = $schema->resultset('Track')->search(undef, { select => ['trackid'], as => ['id'], rows => 3 });
   $tracks_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   my $test_data = JSON::Any->Dump({ list => [$tracks_rs->all] });
   my $req = DELETE( $track_url, Content => $test_data );
