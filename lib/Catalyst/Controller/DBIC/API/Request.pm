@@ -5,11 +5,11 @@ use Moose::Role;
 use MooseX::Types::Moose(':all');
 use namespace::autoclean;
 
-#XXX HACK
+#XXX HACK to satisfy the used roles requirements as long as roles don't support +attr
 sub _application {}
 sub _controller {}
 
-=attribute_private _application is: ro, isa: Object, handles: Catalyst::Controller::DBIC::API::StoredResultSource
+=attribute_private _application is: ro, isa: Object|ClassName, handles: Catalyst::Controller::DBIC::API::StoredResultSource
 
 This attribute helps bridge between the request guts and the application guts; allows request argument validation against the schema. This is set during L<Catalyst::Controller::DBIC::API/inflate_request>
 
