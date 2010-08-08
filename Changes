@@ -4,6 +4,7 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 
 - Added REST and RPC delete_bulk tests
 - Fixed RPC delete_bulk not working at all
+- Added REST and RPC update_bulk tests
 
 2.002002  2010-08-03 14:40:50 Europe/Vienna
 
