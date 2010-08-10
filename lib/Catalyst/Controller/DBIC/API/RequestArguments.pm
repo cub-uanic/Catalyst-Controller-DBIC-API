@@ -10,8 +10,6 @@ use namespace::autoclean;
 
 use Catalyst::Controller::DBIC::API::JoinBuilder;
 
-=for Pod::Coverage check_rel
-
 =attribute_private search_validator
 
 A Catalyst::Controller::DBIC::API::Validator instance used solely to validate search parameters
@@ -199,13 +197,13 @@ Like the synopsis in DBIC::API shows, you can declare a "template" of what is al
         {
             my ($self, $new) = @_;
 
-            sub check_rel {
+            sub _check_rel {
                 my ($self, $rel, $static) = @_;
                 if(ArrayRef->check($rel))
                 {
                     foreach my $rel_sub (@$rel)
                     {
-                        $self->check_rel($rel_sub, $static);
+                        $self->_check_rel($rel_sub, $static);
                     }
                 }
                 elsif(HashRef->check($rel))
@@ -225,7 +223,7 @@ Like the synopsis in DBIC::API shows, you can declare a "template" of what is al
 
             foreach my $rel (@$new)
             {
-                $self->check_rel($rel, $p->static);
+                $self->_check_rel($rel, $p->static);
             }
         },
     );
