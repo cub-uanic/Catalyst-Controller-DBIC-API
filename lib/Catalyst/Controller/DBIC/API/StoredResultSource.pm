@@ -1,5 +1,5 @@
 package Catalyst::Controller::DBIC::API::StoredResultSource;
-#ABSTRACT: Provides acessors for static resources
+#ABSTRACT: Provides accessors for static resources
 
 use Moose::Role;
 use MooseX::Types::Moose(':all');

@@ -39,9 +39,9 @@ has '_controller' =>
     }
 );
 
-with 'Catalyst::Controller::DBIC::API::StoredResultSource';
-with 'Catalyst::Controller::DBIC::API::RequestArguments';
-with 'Catalyst::Controller::DBIC::API::Request::Context';
+with 'Catalyst::Controller::DBIC::API::StoredResultSource',
+     'Catalyst::Controller::DBIC::API::RequestArguments',
+     'Catalyst::Controller::DBIC::API::Request::Context';
 
 =head1 DESCRIPTION
 
