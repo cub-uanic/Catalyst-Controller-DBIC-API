@@ -1063,7 +1063,7 @@ Arguments to pass to L<DBIx::Class::ResultSet/rows> when performing search for L
 
 =head3 page
 
-Arguments to pass to L<DBIx::Class::ResultSet/rows> when performing search for L</list>.
+Arguments to pass to L<DBIx::Class::ResultSet/page> when performing search for L</list>.
 
 =head1 EXTENDING
 
