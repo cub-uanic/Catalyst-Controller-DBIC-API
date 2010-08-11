@@ -22,6 +22,7 @@ my $artist_list_url = "$base/api/rest/artist";
 my $filtered_artist_list_url = "$base/api/rest/bound_artist";
 my $producer_list_url = "$base/api/rest/producer";
 my $cd_list_url = "$base/api/rest/cd";
+my $track_list_url = "$base/api/rest/track";
 
 # test open request
 {
@@ -119,6 +120,20 @@ my $cd_list_url = "$base/api/rest/cd";
           join => [qw/ artist tracks /],
       })->all;
   is_deeply( $response, { list => \@expected_response, success => 'true' }, 'correct data returned for multiple search params' );
+}
+
+# page specified in controller config (RT#56226)
+{
+    my $uri = URI->new( $track_list_url );
+    $uri->query_form();
+    my $req = GET( $uri, 'Accept' => 'text/x-json' );
+    $mech->request($req);
+    cmp_ok( $mech->status, '==', 200, 'get first page ok' );
+    my $response = JSON::Any->Load( $mech->content);
+    my @expected_response = map { { $_->get_columns } } $schema->resultset('Track')->search(undef, {
+            page => 1,
+        })->all;
+    is_deeply( $response, { list => \@expected_response, success => 'true', totalcount => 15 }, 'correct data returned for static configured paging' );
 }
 
 done_testing();

@@ -574,6 +574,7 @@ This builder method generates the search attributes
             as => $self->as || ((scalar(@{$static->as})) ? $static->as : undef),
             prefetch => $self->prefetch || $static->prefetch || undef,
             rows => $self->count || $static->count,
+            page => $static->page,
             offset => $self->offset,
             join => $self->build_joins,
         };

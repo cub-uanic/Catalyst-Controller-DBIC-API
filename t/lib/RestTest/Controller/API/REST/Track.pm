@@ -10,6 +10,8 @@ __PACKAGE__->config
       create_requires => ['cd', 'title' ],
       create_allows => ['cd', 'title', 'position' ],
       update_allows => ['title', 'position', { cd => ['*'] }],
+      page => 1,
+      count => 10,
       );
 
 1;
