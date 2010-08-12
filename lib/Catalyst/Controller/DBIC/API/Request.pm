@@ -5,7 +5,8 @@ use Moose::Role;
 use MooseX::Types::Moose(':all');
 use namespace::autoclean;
 
-#XXX HACK to satisfy the used roles requirements as long as roles don't support +attr
+#XXX HACK to satisfy the used roles requirements
+# see Moose test 600_todo_tests/006_required_role_accessors.t
 sub _application {}
 sub _controller {}
 
