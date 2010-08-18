@@ -156,7 +156,7 @@ my $tracks_update_url = "$base/api/rpc/track/update";
   $mech->request($req);
   cmp_ok( $mech->status, '==', 400, 'Attempt to update three nonexisting tracks fails' );
   my $response = JSON::Any->Load( $mech->content);
-  is( $response->{success}, JSON::Any::false, 'success property returns false' );
+  is( $response->{success}, 'false', 'success property returns quoted false' );
   like( $response->{messages}->[0], qr/No object found for id/, 'correct message returned' );
 }
 
