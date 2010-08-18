@@ -15,9 +15,9 @@ use Try::Tiny;
 use Catalyst::Controller::DBIC::API::Request;
 use namespace::autoclean;
 
-with 'Catalyst::Controller::DBIC::API::StoredResultSource';
-with 'Catalyst::Controller::DBIC::API::StaticArguments';
-with 'Catalyst::Controller::DBIC::API::RequestArguments' => { static => 1 };
+with 'Catalyst::Controller::DBIC::API::StoredResultSource',
+     'Catalyst::Controller::DBIC::API::StaticArguments',
+     'Catalyst::Controller::DBIC::API::RequestArguments' => { static => 1 };
 
 __PACKAGE__->config();
 
@@ -29,24 +29,24 @@ __PACKAGE__->config();
 
   __PACKAGE__->config
     ( action => { setup => { PathPart => 'artist', Chained => '/api/rpc/rpc_base' } }, # define parent chain action and partpath
-      class => 'MyAppDB::Artist', # DBIC schema class
-      create_requires => ['name', 'age'], # columns required to create
-      create_allows => ['nickname'], # additional non-required columns that create allows
-      update_allows => ['name', 'age', 'nickname'], # columns that update allows
-      update_allows => ['name', 'age', 'nickname'], # columns that update allows
-      select => [qw/name age/], # columns that data returns
-      prefetch => ['cds'], # relationships that are prefetched when no prefetch param is passed
-      prefetch_allows => [ # every possible prefetch param allowed
+      class            => 'MyAppDB::Artist',
+      create_requires  => ['name', 'age'],
+      create_allows    => ['nickname'],
+      update_allows    => ['name', 'age', 'nickname'],
+      update_allows    => ['name', 'age', 'nickname'],
+      select           => [qw/name age/],
+      prefetch         => ['cds'],
+      prefetch_allows  => [
           'cds',
           qw/ cds /,
           { cds => 'tracks' },
-          { cds => [qw/ tracks /] }
+          { cds => [qw/ tracks /] },
       ],
-      ordered_by => [qw/age/], # order of generated list
-      search_exposes => [qw/age nickname/, { cds => [qw/title year/] }], # columns that can be searched on via list
-      data_root => 'data' # defaults to "list" for backwards compatibility
-      use_json_boolean => 1, # use JSON::Any::true|false in the response instead of strings
-      return_object => 1, # makes create and update actions return the object
+      ordered_by       => [qw/age/],
+      search_exposes   => [qw/age nickname/, { cds => [qw/title year/] }],
+      data_root        => 'data',
+      use_json_boolean => 1,
+      return_object    => 1,
       );
 
   # Provides the following functional endpoints:
