@@ -180,7 +180,9 @@ generate_rs is used by inflate_request to generate the resultset stored in the c
 
 sub generate_rs
 {
-    my ($self, $c) = @_;
+    #my ($self, $c) = @_;
+    my ($self) = @_;
+
     return $self->stored_result_source->resultset;
 }
 
@@ -461,7 +463,8 @@ row_format_output is called each row of the inflated output generated from the s
 
 sub row_format_output
 {
-    my ($self, $c, $row) = @_;
+    #my ($self, $c, $row) = @_;
+    my ($self, undef, $row) = @_;
     return $row; # passthrough by default
 }
 
@@ -791,7 +794,8 @@ insert_object_from_params sets the columns for the object, then calls ->insert
 
 sub insert_object_from_params
 {
-    my ($self, $c, $object, $params) = @_;
+    #my ($self, $c, $object, $params) = @_;
+    my ($self, undef, $object, $params) = @_;
 
     my %rels;
     while (my ($k, $v) = each %{ $params }) {
@@ -831,7 +835,8 @@ Performs the actual ->delete on the object
 
 sub delete_object
 {
-    my ($self, $c, $object) = @_;
+    #my ($self, $c, $object) = @_;
+    my ($self, undef, $object) = @_;
 
     $object->delete;
 }
@@ -887,7 +892,8 @@ This only executes if L</return_object> if set and if there are any objects to a
 
 sub each_object_inflate
 {
-    my ($self, $c, $object) = @_;
+    #my ($self, $c, $object) = @_;
+    my ($self, undef, $object) = @_;
 
     return { $object->get_columns };
 }
