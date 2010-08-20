@@ -516,8 +516,9 @@ generate_column_parameters recursively generates properly aliased parameters for
         # build up condition
         foreach my $column (keys %$param)
         {
-            if($source->has_relationship($column))
+            if ($source->has_relationship($column))
             {
+                # check if the value isn't a hashref
                 unless (ref($param->{$column}) && reftype($param->{$column}) eq 'HASH')
                 {
                     $search_params->{join('.', $base, $column)} = $param->{$column};
@@ -534,9 +535,21 @@ generate_column_parameters recursively generates properly aliased parameters for
                     )
                 }};
             }
-            else
+            elsif ($source->has_column($column))
             {
                 $search_params->{join('.', $base, $column)} = $param->{$column};
+            }
+            # might be a sql function instead of a column name
+            # e.g. {colname => {like => '%foo%'}}
+            else
+            {
+                # but only if it's not a hashref
+                unless (ref($param->{$column}) && reftype($param->{$column}) eq 'HASH') {
+                    $search_params->{join('.', $base, $column)} = $param->{$column};
+                }
+                else {
+                    die "$column is neither a relationship nor a column\n";
+                }
             }
         }
 

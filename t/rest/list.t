@@ -73,7 +73,7 @@ my $track_list_url = "$base/api/rest/track";
 
 {
   my $uri = URI->new( $artist_list_url );
-  $uri->query_form({ 'search.cds.title' => 'Forkful of bees' });	
+  $uri->query_form({ 'search.cds.title' => 'Forkful of bees' });
   my $req = GET( $uri, 'Accept' => 'text/x-json' );
   $mech->request($req);
   cmp_ok( $mech->status, '==', 200, 'search related request okay' );
@@ -134,6 +134,26 @@ my $track_list_url = "$base/api/rest/track";
             page => 1,
         })->all;
     is_deeply( $response, { list => \@expected_response, success => 'true', totalcount => 15 }, 'correct data returned for static configured paging' );
+}
+
+{
+    my $uri = URI->new( $artist_list_url );
+    $uri->query_form({ 'search.cds.track.title' => 'Suicidal' });
+    my $req = GET( $uri, 'Accept' => 'text/x-json' );
+    $mech->request($req);
+    cmp_ok( $mech->status, '==', 400, 'attempt with nonexisting relationship fails' );
+    my $response = JSON::Any->Load( $mech->content);
+    is_deeply( $response->{messages}, ["track is neither a relationship nor a column\n"], 'correct error message returned' );
+}
+
+{
+    my $uri = URI->new( $artist_list_url );
+    $uri->query_form({ 'search.cds.tracks.foo' => 'Bar' });
+    my $req = GET( $uri, 'Accept' => 'text/x-json' );
+    $mech->request($req);
+    cmp_ok( $mech->status, '==', 400, 'attempt with nonexisting column fails' );
+    my $response = JSON::Any->Load( $mech->content);
+    is_deeply( $response->{messages}, ['a database error has occured.'], 'correct error message returned' );
 }
 
 done_testing();

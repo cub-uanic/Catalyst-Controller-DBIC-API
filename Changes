@@ -8,6 +8,7 @@ Revision history for Catalyst-Controller-DBIC-API: {{ $dist->version }}
 - Removed useless RPC index action
 - Fixed static configured page attribute not being used (RT#56226)
 - Test use_json_boolean true
+- Fixed search attribute generation for nonexistent relationships
 
 2.002002  2010-08-03 14:40:50 Europe/Vienna
 
