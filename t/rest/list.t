@@ -156,4 +156,19 @@ my $track_list_url = "$base/api/rest/track";
     is_deeply( $response->{messages}, ['a database error has occured.'], 'correct error message returned' );
 }
 
+{
+    my $uri = URI->new( $artist_list_url );
+    $uri->query_form({ 'search.cds.tracks.title.like' => 'Boring%' });
+    my $req = GET( $uri, 'Accept' => 'text/x-json' );
+    $mech->request($req);
+    cmp_ok( $mech->status, '==', 200, 'attempt with sql function ok' );
+    my $response = JSON::Any->Load( $mech->content);
+    my @expected_response = map { { $_->get_columns } } $schema->resultset('Artist')->search({
+            'tracks.title' => { 'like' => 'Boring%' },
+        }, {
+            join => { cds => 'tracks' },
+        })->all;
+    is_deeply( $response, { list => \@expected_response, success => 'true' }, 'correct data returned for search with sql function' );
+}
+
 done_testing();
