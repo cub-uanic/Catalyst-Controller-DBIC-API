@@ -143,7 +143,7 @@ my $track_list_url = "$base/api/rest/track";
     $mech->request($req);
     cmp_ok( $mech->status, '==', 400, 'attempt with nonexisting relationship fails' );
     my $response = JSON::Any->Load( $mech->content);
-    is_deeply( $response->{messages}, ["track is neither a relationship nor a column\n"], 'correct error message returned' );
+    is_deeply( $response->{messages}, ['track is neither a relationship nor a column'], 'correct error message returned' );
 }
 
 {

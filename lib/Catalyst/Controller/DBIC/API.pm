@@ -916,7 +916,14 @@ push_error stores an error message into the stash to be later retrieved by L</en
 sub push_error
 {
     my ( $self, $c, $params ) = @_;
-    push( @{$c->stash->{_dbic_crud_errors}}, $params->{message} || 'unknown error' );
+    my $error = 'unknown error';
+    if (exists $params->{message}) {
+        $error = $params->{message};
+        # remove newline from die "error message\n" which is required to not
+        # have the filename and line number in the error text
+        $error =~ s/\n$//;
+    }
+    push( @{$c->stash->{_dbic_crud_errors}}, $error);
 }
 
 =method_protected get_errors
