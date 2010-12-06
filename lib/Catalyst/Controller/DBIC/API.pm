@@ -30,6 +30,7 @@ __PACKAGE__->config();
   __PACKAGE__->config
     ( action => { setup => { PathPart => 'artist', Chained => '/api/rpc/rpc_base' } }, # define parent chain action and partpath
       class            => 'MyAppDB::Artist',
+      result_class     => 'MyAppDB::ResultSet::Artist',
       create_requires  => ['name', 'age'],
       create_allows    => ['nickname'],
       update_allows    => ['name', 'age', 'nickname'],
@@ -331,7 +332,7 @@ sub object_lookup
 
 list's steps are broken up into three distinct methods: L</list_munge_parameters>, L</list_perform_search>, and L</list_format_output>.
 
-The goal of this method is to call ->search() on the current_result_set, HashRefInflator the result, and return it in $c->stash->{response}->{$self->data_root}. Please see the individual methods for more details on what actual processing takes place.
+The goal of this method is to call ->search() on the current_result_set, change resultset class of the result (if needed), and return it in $c->stash->{response}->{$self->data_root}. Please see the individual methods for more details on what actual processing takes place.
 
 If the L</select> config param is defined then the hashes will contain only those columns, otherwise all columns in the object will be returned. L</select> of course supports the function/procedure calling semantics that L<DBIx::Class::ResultSet/select>. In order to have proper column names in the result, provide arguments in L</as> (which also follows L<DBIx::Class::ResultSet/as> semantics. Similarly L</count>, L</page>, L</grouped_by> and L</ordered_by> affect the maximum number of rows returned as well as the ordering and grouping. Note that if select, count, ordered_by or grouped_by request parameters are present then these will override the values set on the class with select becoming bound by the select_exposes attribute.
 
@@ -426,7 +427,7 @@ sub list_format_output
     my ($self, $c) = @_;
 
     my $rs = $c->req->current_result_set->search;
-    $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    $rs->result_class($self->result_class) if $self->result_class;
 
     try
     {
@@ -980,6 +981,10 @@ Below are explanations for various configuration parameters. Please see L<Cataly
 =head3 class
 
 Whatever you would pass to $c->model to get a resultset for this class. MyAppDB::Track for example.
+
+=head3 resultset_class
+
+Desired resultset class after accessing your model. MyAppDB::ResultSet::Track for example. By default, it's DBIx::Class::ResultClass::HashRefInflator. Set to empty string to leave resultset class without change.
 
 =head3 data_root
 

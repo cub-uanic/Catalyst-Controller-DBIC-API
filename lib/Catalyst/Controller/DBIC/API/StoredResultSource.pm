@@ -17,6 +17,14 @@ class is the name of the class that is the model for this controller
 
 has 'class' => ( is => 'ro', isa => Str, writer => '_set_class' );
 
+=attribute_public result_class is: ro, isa: Str
+
+result_class is the name of the resultset class that is the model for this controller
+
+=cut
+
+has 'result_class' => ( is => 'ro', isa => Str, default => 'DBIx::Class::ResultClass::HashRefInflator' );
+
 =attribute_public stored_result_source is: ro, isa: L<Catalyst::Controller::DBIC::API::Types/ResultSource>
 
 This is the result source for the controller
