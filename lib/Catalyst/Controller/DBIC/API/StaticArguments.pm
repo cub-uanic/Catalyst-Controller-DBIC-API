@@ -122,6 +122,14 @@ prefetch_arg controls how to reference 'prefetch' in the the request_data
 
 has 'prefetch_arg' => ( is => 'ro', isa => Str, default => 'list_prefetch' );
 
+=attribute_public stash_key is: ro, isa: Str, default: 'response'
+
+stash_key controls where in stash request_data should be stored
+
+=cut
+
+has 'stash_key' => ( is => 'ro', isa => Str, default => 'response');
+
 =attribute_public data_root is: ro, isa: Str, default: 'list'
 
 data_root controls how to reference where the data is in the the request_data
